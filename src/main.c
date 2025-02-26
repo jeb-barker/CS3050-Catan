@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 #include "intdef.h"
+#include <stdio.h>
 
 #include "emm_vulkan.h"
 
@@ -11,7 +12,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
     void* pUserData) {
 
-    SDL_Log("Validation layer: %s\n", pCallbackData->pMessage);
+    printf("Validation layer: %s\n", pCallbackData->pMessage);
 
     return VK_FALSE;
 }
@@ -45,7 +46,7 @@ int main(void) {
 	VulkanApp app = {
 		.name = "drive",
 		.validate = 1,
-		.debugCallbackFunction = debugCallback
+		.debugCallbackFunction = NULL //debugCallback
 	};
 
 	SDL_Vulkan_GetInstanceExtensions(window, &app.extensionCount, NULL);
