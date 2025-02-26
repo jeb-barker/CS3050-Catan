@@ -11,6 +11,8 @@ typedef struct VulkanApp {
 	VkPhysicalDevice physicalDevice;
 	VkDevice device;	
 
+
+	uint32 queueCount; // if greater than zero, select a queue family with at least that many queues
 	
 	const char **extensionNames;
 	uint32 extensionCount;
