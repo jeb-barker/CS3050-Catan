@@ -68,33 +68,66 @@ VkResult initializeVulkanApp(VulkanApp *app) {
 	if (physicalDevices == NULL) return VK_ERROR_OUT_OF_HOST_MEMORY;
 	vkEnumeratePhysicalDevices(app->instance, &physicalDeviceCount, physicalDevices);
 
-	// select the first physical device that has a queueFamily with graphics operations
+	
 	uint32 queueFamilyCount = 0, queueFamilyIndex;
 	VkQueueFamilyProperties *queueFamilyProperties;
 	VkQueueFlags requiredQueueFlags = VK_QUEUE_GRAPHICS_BIT;
 
 	for (uint32 i = 0; i < physicalDeviceCount; i++) {
+		// query queue family properties
 		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevices[i], &queueFamilyCount, NULL);
 		queueFamilyProperties = malloc(sizeof(VkQueueFamilyProperties) * queueFamilyCount);
 		if (queueFamilyProperties == NULL) return VK_ERROR_OUT_OF_HOST_MEMORY;
 		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevices[i], &queueFamilyCount, 
 			queueFamilyProperties);
+		bool deviceSupportsRequiredQueueOperations = 0;
 		for (uint32 j = 0; j < queueFamilyCount; j++) {
 			if ((queueFamilyProperties[i].queueFlags & requiredQueueFlags)) {
 				// does the queue family contain at lease the requested number of queues
 				if (app->queueCount == 0 || app->queueCount >= queueFamilyProperties[i].queueCount) {
 					if (app->queueCount == 0) app->queueCount = queueFamilyProperties[i].queueCount;
 					queueFamilyIndex = j;
-					app->physicalDevice = physicalDevices[i];
+					deviceSupportsRequiredQueueOperations = 1;
 					break;
 				}
 			}
 		}
 		free(queueFamilyProperties);
+		if (deviceSupportsRequiredQueueOperations) {
+			// check for requested device extension support
+			uint32 deviceExtensionCount = 0;
+			vkEnumerateDeviceExtensionProperties(physicalDevices[i], NULL, &deviceExtensionCount, NULL);
+			if (deviceExtensionCount > 0) {
+				VkExtensionProperties *deviceExtensions = malloc(
+					sizeof(VkExtensionProperties) * deviceExtensionCount);
+				if (deviceExtensions != NULL) {
+					vkEnumerateDeviceExtensionProperties(
+						physicalDevices[i], NULL, &deviceExtensionCount, deviceExtensions);
+					bool allRequestedExtensionsSupported = 1;
+					for (uint32 j = 0; j < app->deviceExtensionCount; j++) {
+						bool extensionIsSupported = 0;
+						for (uint32 k = 0; k < deviceExtensionCount; k++) {
+							if (strcmp(app->deviceExtensionNames[j], deviceExtensions[k].extensionName) == 0) {
+								extensionIsSupported = 1;
+								break;
+							}
+						}
+						if (!extensionIsSupported) {
+							allRequestedExtensionsSupported = 0;
+							break;
+						}
+					}
+					if (allRequestedExtensionsSupported) {
+						app->physicalDevice = physicalDevices[i];
+					}
+					free(deviceExtensions);
+				}
+			} 
+		}
 		if (app->physicalDevice != VK_NULL_HANDLE) break;
 	}
 
-	
+	// when a suitible device is found, it will be assigned to app->physicalDevice	
 	if (app->physicalDevice == VK_NULL_HANDLE) return VK_ERROR_FEATURE_NOT_PRESENT;
 	
 	free(physicalDevices);
@@ -140,6 +173,10 @@ void quitVulkanApp(VulkanApp *app) {
 		if (vkDestroyDebugUtilsMessengerEXT != NULL)
 			vkDestroyDebugUtilsMessengerEXT(app->instance, app->debugMessenger, app->allocator);
 	}
+	if (app->surface != VK_NULL_HANDLE) {
+		vkDestroySurfaceKHR(app->instance, app->surface, app->allocator);
+	}
+
 	if (app->device != VK_NULL_HANDLE) {
 		vkDestroyDevice(app->device, app->allocator);
 	}

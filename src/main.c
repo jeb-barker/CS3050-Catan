@@ -6,6 +6,8 @@
 
 #include "emm_vulkan.h"
 
+const char *APP_NAME = "catan";
+
 VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT severity,
     VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -26,7 +28,7 @@ int main(void) {
 	
 	// open main window
 	SDL_Window *window = SDL_CreateWindow(
-		"drive",
+		APP_NAME,
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		1280, 720,
 		SDL_WINDOW_VULKAN | SDL_WINDOW_ALLOW_HIGHDPI
@@ -44,19 +46,33 @@ int main(void) {
 	SDL_Vulkan_GetDrawableSize(window, &pixelW, &pixelH);
 
 	VulkanApp app = {
-		.name = "drive",
+		.name = APP_NAME,
 		.validate = 1,
 		.debugCallbackFunction = debugCallback
 	};
 
 	SDL_Vulkan_GetInstanceExtensions(window, &app.extensionCount, NULL);
 	app.extensionNames = malloc((app.extensionCount + 2) * sizeof(char *));
+	if (app.extensionNames == NULL) goto cleanup;
 	SDL_Vulkan_GetInstanceExtensions(window, &app.extensionCount, app.extensionNames);	
 	app.extensionNames[app.extensionCount++] = "VK_KHR_portability_enumeration";
 	app.extensionNames[app.extensionCount++] = VK_EXT_DEBUG_UTILS_EXTENSION_NAME; 
 
+	app.deviceExtensionCount = 1;
+	app.deviceExtensionNames = malloc(sizeof(const char *) * app.deviceExtensionCount);
+	if (app.deviceExtensionNames == NULL) goto cleanup;
+	app.deviceExtensionNames[0] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+
 	uint32 res = initializeVulkanApp(&app);
 	if (res != 0) SDL_Log("Vulkan App init failed with code: %d\n", res);
+	
+	free(app.deviceExtensionNames);
+	free(app.extensionNames);
+
+	if (SDL_Vulkan_CreateSurface(window, app.instance, &app.surface) == SDL_FALSE) {
+		SDL_Log("SDL window creation failed: %s\n", SDL_GetError());	
+		goto cleanup;
+	}
 
 	SDL_Event e;
 	while (1) {
@@ -77,7 +93,6 @@ int main(void) {
 
 
 cleanup:
-	free(app.extensionNames);
 	quitVulkanApp(&app);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
