@@ -55,7 +55,7 @@ VkResult initializeVulkanApp(VulkanApp *app) {
 		PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT =
 			(PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(
 			app->instance, "vkCreateDebugUtilsMessengerEXT");
-		
+		if (vkCreateDebugUtilsMessengerEXT == NULL) return VK_ERROR_EXTENSION_NOT_PRESENT;	
 		vkCreateDebugUtilsMessengerEXT(app->instance, &debugMessengerCreateInfo, 
 									   app->allocator, &app->debugMessenger);
 	}
@@ -137,7 +137,8 @@ void quitVulkanApp(VulkanApp *app) {
 		PFN_vkDestroyDebugUtilsMessengerEXT vkDestroyDebugUtilsMessengerEXT =
 			(PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(
 			app->instance, "vkDestroyDebugUtilsMessengerEXT");
-		vkDestroyDebugUtilsMessengerEXT(app->instance, app->debugMessenger, app->allocator);
+		if (vkDestroyDebugUtilsMessengerEXT != NULL)
+			vkDestroyDebugUtilsMessengerEXT(app->instance, app->debugMessenger, app->allocator);
 	}
 	if (app->device != VK_NULL_HANDLE) {
 		vkDestroyDevice(app->device, app->allocator);
