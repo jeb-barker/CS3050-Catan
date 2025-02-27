@@ -46,7 +46,7 @@ int main(void) {
 	VulkanApp app = {
 		.name = "drive",
 		.validate = 1,
-		.debugCallbackFunction = NULL //debugCallback
+		.debugCallbackFunction = debugCallback
 	};
 
 	SDL_Vulkan_GetInstanceExtensions(window, &app.extensionCount, NULL);

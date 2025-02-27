@@ -22,11 +22,25 @@ VkResult initializeVulkanApp(VulkanApp *app) {
 	const char *validationLayerNames[] = {
 		"VK_LAYER_KHRONOS_validation"
 	};
+	
+	VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = {
+		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+		.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | 
+						   VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+						   VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT, 
+		.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+					   VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | 
+					   VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
+		.pfnUserCallback = app->debugCallbackFunction 
+	};
 
 	if (app->validate) {
 		// todo check layer availibility and only enable if they are availible
 		instanceCreateInfo.enabledLayerCount = 1;
 		instanceCreateInfo.ppEnabledLayerNames = validationLayerNames;
+		if (app->debugCallbackFunction) {
+			instanceCreateInfo.pNext = &debugMessengerCreateInfo;
+		}
 	}
 
 	res = vkCreateInstance(&instanceCreateInfo, app->allocator, &app->instance);
@@ -34,17 +48,9 @@ VkResult initializeVulkanApp(VulkanApp *app) {
 	if (res != VK_SUCCESS) {
 		return res;
 	}
-
+	
 	if (app->validate && app->debugCallbackFunction) {
 		// register the debug messenger function
-		VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = {
-			.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-			.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT, 
-			.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-						   VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | 
-						   VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
-			.pfnUserCallback = app->debugCallbackFunction 
-		};
 
 		PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT =
 			(PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(
