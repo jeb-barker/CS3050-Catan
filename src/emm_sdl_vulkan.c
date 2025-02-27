@@ -87,8 +87,9 @@ void mainloopSDLVulkanApp(SDLVulkanApp *app) {
 }
 
 void quitSDLVulkanApp(SDLVulkanApp *app) {
+	quitVulkanApp(&app->vkapp);
 	if (app->window) {
 		SDL_DestroyWindow(app->window);
 	}
-	quitVulkanApp(&app->vkapp);
+	SDL_Quit();
 }
