@@ -124,6 +124,7 @@ VkResult initializeVulkanApp(VulkanApp *app) {
 				}
 			} 
 		}
+		// if a suitable device has been found, stop searching
 		if (app->physicalDevice != VK_NULL_HANDLE) break;
 	}
 
@@ -150,8 +151,8 @@ VkResult initializeVulkanApp(VulkanApp *app) {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		.queueCreateInfoCount = 1,
 		.pQueueCreateInfos = &deviceQueueCreateInfo,
-		.enabledExtensionCount = 0,
-		.ppEnabledExtensionNames = NULL,
+		.enabledExtensionCount = app->deviceExtensionCount,
+		.ppEnabledExtensionNames = app->deviceExtensionNames,
 	};
 	
 	res = vkCreateDevice(app->physicalDevice, &deviceCreateInfo, app->allocator, &app->device);

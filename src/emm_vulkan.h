@@ -39,6 +39,30 @@ typedef struct VulkanApp {
 	bool validate;
 } VulkanApp;
 
+
+
+/*
+	initializeVulkanApp creates an instance, selects a physical device, and creates a logical device
+
+	Arguments:
+		queueCount				number of queues requested, or 0 for as many as in queue family with supported features
+		extensionNames			array of instance extension names to enable
+		extensionCount			length of extension names array
+		deviceExtensionNames	array of device extension names to enable
+		deviceExtensionCount	length of device extension names
+		debugCallbackFunction	function pointer to debug callback, or NULL to disable
+		allocator				pointer to allocation callbacks, or NULL to use default allocator
+		name					application name
+		validate				if true, enable validation layers
+	Affects:
+		instance		creates instance with required extensions enabled
+		physicalDevice	selects a physical device with required features and queues
+		device			creates a logical device
+		debugMessenger	if enabled, creates a debug messenger for debugging info
+	return:
+		VK_SUCCESS 		if successful
+						otherwise, a different VK error code indicating failure
+*/
 VkResult initializeVulkanApp(VulkanApp *app);
 void quitVulkanApp(VulkanApp *app);
 
