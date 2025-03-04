@@ -12,8 +12,8 @@ class Tile:
     vertices (int[] contains ids of the vertices on this hexagon)
     edges (int[] the index in the edges array)
     """
-    def __init__(self, index= -1, neighbors=[], vertices=[], edges=[], genNum= -1, resource="", resourceTexture= ""):
-        self.index = index
+    def __init__(self, coords, neighbors=[], vertices=[], edges=[], genNum= -1, resource="", resourceTexture= ""):
+        self.coords = coords
         self.neighbors = neighbors
         self.vertices = vertices
         self.edges = edges
