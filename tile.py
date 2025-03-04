@@ -1,6 +1,6 @@
-'''
-
-'''
+import pyglet
+from pyglet.gl import *
+import math
 
 class Tile:
     """
@@ -12,11 +12,23 @@ class Tile:
     vertices (int[] contains ids of the vertices on this hexagon)
     edges (int[] the index in the edges array)
     """
-    def __intit__(index=-1: int, neighbors=[]: List[int], vertices=[]: List[int], edges=[]: List[int], genNum=-1: int, resource: Resource, resourceTexture="": string):
-        this.index = index
-        this.neighbors = neighbors
-        this.vertices = vertices
-        this.edges = edges
-        this.genNum = genNum
-        this.resource = resource
-        this.resourceTexture = resourceTexture
+    def __init__(self, index= -1, neighbors=[], vertices=[], edges=[], genNum= -1, resource="", resourceTexture= ""):
+        self.index = index
+        self.neighbors = neighbors
+        self.vertices = vertices
+        self.edges = edges
+        self.genNum = genNum
+        self.resource = resource
+        self.resourceTexture = resourceTexture
+    
+    # Returns a list of vertices in a hexagon
+    def create_hexagon(self, x, y, size):
+        return [(x + size * math.cos(math.radians(60 * i)), 
+                y + size * math.sin(math.radians(60 * i))) for i in range(6)]
+    
+    # returns a pyglet Polygon
+    def draw_tile(self, x, y, radius) -> pyglet.shapes.Polygon:
+        hexagon = pyglet.shapes.Polygon(*self.create_hexagon(x, y, radius), color=(0, 255, 0))
+        hexagon.draw()
+    
+
