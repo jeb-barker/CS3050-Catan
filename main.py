@@ -1,17 +1,14 @@
 import pyglet
+from pyglet.gl import *
+import tile
 
 if __name__ == "__main__": 
     window = pyglet.window.Window()
+    t = tile.Tile()
 
-    label = pyglet.text.Label('Hello, world',
-                            font_name='Times New Roman',
-                            font_size=36,
-                            x=window.width//2, y=window.height//2,
-                            anchor_x='center', anchor_y='center')
-    
     @window.event
     def on_draw():
-        window.clear()
-        label.draw()
+        glClear(GL_COLOR_BUFFER_BIT)
+        t.draw_tile(window.width/2,window.height/2, 50)
 
     pyglet.app.run()
