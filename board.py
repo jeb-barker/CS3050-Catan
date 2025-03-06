@@ -1,9 +1,11 @@
 '''
 
 '''
+import road
 import tile
 from texture_enums import *
 from board_config import *
+from road import *
 
 class Board:
     """
@@ -21,7 +23,6 @@ class Board:
         self.roads = []
         self.resource_bank = []
         self.development_cards = []
-
 
         self.beginner_setup()
 
@@ -74,9 +75,11 @@ class Board:
             if tile.coords == coords:
                 return tile
     
-    # check winning conditions
 
     # place road
+    def place_road(self, owner, vertex1, vertex2):
+        """ Place road between two vertices """
+        self.roads.append(road.Road(owner=owner, vertex1=vertex1, vertex2=vertex2))
 
     # place on vertex
 
@@ -85,5 +88,8 @@ class Board:
     # trading
 
     # adding/removing cards from hand
+
+    # check winning conditions
+
 
 
