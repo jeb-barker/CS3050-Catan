@@ -6,6 +6,7 @@ import tile
 from texture_enums import *
 from board_config import *
 from road import *
+import random
 
 class Board:
     """
@@ -113,6 +114,24 @@ class Board:
             return -1
 
     # start turn: roll die/distribute resources
+    def start_turn(self, player):
+        """
+        - Turn for whichever player's turn it is
+        - Roll dice and distribute resources
+        - Option to trade resources with other players or maritime trade
+        - Option to build roads, settlements or cities and/or buy development cards
+        - Option to play one development card at any time during turn
+        """
+        # Roll dice first
+        die1 = random.randint(1,6)
+        die2 = random.randint(1,6)
+        roll = die1, die2
+
+        # Distribute resources
+        for player in self.players:
+
+
+
 
     # trading
 
