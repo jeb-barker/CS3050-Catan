@@ -2,6 +2,8 @@
 
 '''
 import tile
+from texture_enums import *
+
 class board:
     """
     players: List of players
@@ -40,16 +42,25 @@ class board:
                     (-2, 2), (-1, 2), (0, 2)
         ]
 
+        # Generation Numbers
+        tile_gen_nums = [
+            10, 2, 9,
+            12, 6, 4, 10,
+            9, 11, 0, 3, 8,
+            8, 3, 4, 5,
+            5, 6, 11
+        ]
+
         # Resources in order in beginner setup
         tile_resources = [
-            "mountains", "pasture", "forest",
-            "fields", "hills", "pasture", "hills",
-            "fields", "forest", "desert", "forest", "mountains",
-            "forest", "mountains", "fields", "pasture",
-            "hills", "fields", "pasture"
+            Resource.ore, Resource.sheep, Resource.wood,
+            Resource.wheat, Resource.brick, Resource.sheep, Resource.brick,
+            Resource.wheat, Resource.wood, Resource.desert, Resource.wood, Resource.ore,
+            Resource.wood, Resource.ore, Resource.wheat, Resource.sheep,
+            Resource.brick, Resource.wheat, Resource.sheep
         ]
         for i in range(19):
-            self.tiles.append(tile.Tile(coords=tile_coords[i], resource=tile_resources[i]))
+            self.tiles.append(tile.Tile(coords=tile_coords[i], genNum=tile_gen_nums[i], resource=tile_resources[i]))
 
 
     def get_tile_at(self, coords):
