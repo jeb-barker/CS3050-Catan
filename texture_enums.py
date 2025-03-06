@@ -21,5 +21,5 @@ class Resource(Enum):
     wheat = 1
     sheep = 2
     brick = 3
-    wood = 5
-    desert = 6
+    wood = 4
+    desert = 5
