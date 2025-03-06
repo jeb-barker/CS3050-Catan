@@ -26,12 +26,12 @@ class Renderer(pyglet.window.Window):
 
 
     def load_tiles_batch(self):
-        hills_tile_img     = pyglet.image.load("hills_tile.png")
-        forest_tile_img    = pyglet.image.load("forest_tile.png")
-        mountains_tile_img = pyglet.image.load("mountains_tile.png")
-        fields_tile_img    = pyglet.image.load("fields_tile.png")
-        pasture_tile_img   = pyglet.image.load("pasture_tile.png")
-        desert_tile_img    = pyglet.image.load("desert_tile.png")
+        hills_tile_img     = pyglet.image.load("/assets/hill.png")
+        forest_tile_img    = pyglet.image.load("/assets/forest.png")
+        mountains_tile_img = pyglet.image.load("/assets/mountain.png")
+        fields_tile_img    = pyglet.image.load("/assets/field.png")
+        pasture_tile_img   = pyglet.image.load("/assets/pasture.png")
+        desert_tile_img    = pyglet.image.load("/assets/desert.png")
         self.tile_sprites = []        
 
         for tile in board.tiles:
