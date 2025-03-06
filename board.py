@@ -129,7 +129,7 @@ class Board:
 
         # Distribute resources
         for player in self.players:
-
+            pass
 
 
 
@@ -138,11 +138,14 @@ class Board:
     # adding/removing cards from hand -> maybe move to Player class
     def add_resources(self, player, cards: list[Card]):
         for card in cards:
-            player.resources.append()
+            if len(self.resource_bank) > 0:
+                return self.resource_bank.pop()
+            else:
+                return None
 
     def draw_development_card(self, player, card):
-        if len(self.resource_bank) > 0:
-            return self.resource_bank.pop()
+        if len(self.development_cards) > 0:
+            return self.development_cards.pop()
         else:
             return None
         
