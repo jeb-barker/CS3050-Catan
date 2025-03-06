@@ -8,13 +8,12 @@ class Renderer(pyglet.window.Window):
     TILE_SCALE = 0.1
 
     def __init__(self, board):
-        super().__init__(width=1280, height=720, caption="Catan")
+        super().__init__(width=2000, height=1000, caption="Catan")
         
         self.board = Board()
         self.tiles_batch = pyglet.graphics.Batch()
         self.gen_nums_batch = pyglet.graphics.Batch()
         self.load_tiles_batch()
-        
 
 
     def on_draw(self):
@@ -41,14 +40,26 @@ class Renderer(pyglet.window.Window):
                   hills_tile_img, forest_tile_img, desert_tile_img]
 
         # assume all images are the same size and calculate the scale factor for the sprite
-        
-        scale = 0.2
-        self.tile_sprites = []        
+       
+        image_width = images[0].width
+        image_height = images[0].height
+
+        tile_width = self.TILE_SCALE * self.width 
+        tile_height = tile_width * image_height / self.height
+    
+        scale = tile_width / image_width
+
+        self.tile_sprites = []
+ 
+        center_x = self.width / 2 - tile_width / 2
+        center_y = self.height / 2 - tile_height / 2
 
         for tile in self.board.tiles:
             image = images[tile.resource.value]
-            x = 0#? # compute based on tile coord displacement from center
-            y = 0#? # same as x
+            axial_x, axial_y = tile.coords
+            x = center_x + (axial_x * tile_width)
+            y = center_y + (axial_y * tile_height)
+           
             sprite = pyglet.sprite.Sprite(image, batch=self.tiles_batch, x=x, y=y)
             sprite.scale = scale
             self.tile_sprites.append(sprite)
