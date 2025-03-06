@@ -3,8 +3,9 @@
 '''
 import tile
 from texture_enums import *
+from board_config import *
 
-class board:
+class Board:
     """
     players: List of players
     tiles: List of tiles on board
@@ -59,6 +60,9 @@ class board:
             Resource.wood, Resource.ore, Resource.wheat, Resource.sheep,
             Resource.brick, Resource.wheat, Resource.sheep
         ]
+
+        # Vertices left to right, top to bottom
+
         for i in range(19):
             self.tiles.append(tile.Tile(coords=tile_coords[i], genNum=tile_gen_nums[i], resource=tile_resources[i]))
 
