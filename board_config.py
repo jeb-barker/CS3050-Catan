@@ -1,4 +1,4 @@
-from enum import enum
+from enum import Enum
 
 # Adjacency List representing vertices and their neighbors
 """
