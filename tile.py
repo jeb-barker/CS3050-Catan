@@ -1,5 +1,6 @@
 import math
 from texture_enums import *
+import pyglet
 
 class Tile:
     """
@@ -30,11 +31,11 @@ class Tile:
     
     # TODO: move rendering functions to another file
     # returns a pyglet Polygon
-    """
+    
     def draw_tile(self, x, y, radius) -> pyglet.shapes.Polygon:
         hexagon = pyglet.shapes.Polygon(*self.create_hexagon(x, y, radius), color=(0, 255, 0))
         hexagon.draw()
-    """
+    
     
 # returns the neighbors of an axial coordinate that are within the catan board (hexagonal grid with radius 2).
 def get_neighbors_from_coordinate(coords: tuple[int,int]) -> list[tuple[int,int]]:

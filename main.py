@@ -4,7 +4,7 @@ import tile
 
 if __name__ == "__main__": 
     window = pyglet.window.Window()
-    t = tile.Tile()
+    t = tile.Tile((0,0))
 
     @window.event
     def on_draw():
