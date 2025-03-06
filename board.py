@@ -108,7 +108,7 @@ class Board:
         if building == Building.settlement or building == Building.city:
             self.vertices[vertex_index].owner = owner
             self.vertices[vertex_index].building = building
-            return 1
+            return 0
         else:
             return -1
 
@@ -116,7 +116,20 @@ class Board:
 
     # trading
 
-    # adding/removing cards from hand
+    # adding/removing cards from hand -> maybe move to Player class
+    def add_resources(self, player, cards: list[Card]):
+        for card in cards:
+            player.resources.append()
+
+    def draw_development_card(self, player, card):
+        if len(self.resource_bank) > 0:
+            return self.resource_bank.pop()
+        else:
+            return None
+        
+
+    def remove_resources(self, player, resources: list[Resource]):
+        for resource in resources:
 
     # check winning conditions
 
