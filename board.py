@@ -93,7 +93,24 @@ class Board:
                     self.roads.append(Road(owner=owner, vertex1=vertex1, vertex2=vertex2))
                     return True
 
-    # place on vertex
+    # place building at the given vertex_index
+    # returns -1 if there's an error or the placement is invalid
+    def place_building(self, building, owner, vertex_index):
+        vertex = self.vertices[vertex_index]
+        # check if city or settlement is there already:
+        if vertex.building != Building.none:
+            return -1
+        # check if city or settlement is one vertex away (see catan rules for more info)
+        for neighbor_vertex_index in VERTEX_ADJACENCY[vertex]:
+            if self.vertices[neighbor_vertex_index].building != Building.none:
+                return -1
+        # case if placing a settlement or city
+        if building == Building.settlement or building == Building.city:
+            self.vertices[vertex_index].owner = owner
+            self.vertices[vertex_index].building = building
+            return 1
+        else:
+            return -1
 
     # start turn: roll die/distribute resources
 
