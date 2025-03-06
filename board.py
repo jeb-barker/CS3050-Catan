@@ -125,10 +125,19 @@ class Board:
         # Roll dice first
         die1 = random.randint(1,6)
         die2 = random.randint(1,6)
-        roll = die1, die2
+        roll = die1 + die2
 
         # Distribute resources
-        for player in self.players:
+        # TODO: Don't give players resources if there aren't enough for all players
+        for tile in self.tiles:
+            if tile.genNum == roll:
+                for vertex in TILE_ADJACENCY:
+                    if vertex.owner in self.players:
+                        if vertex.building == Building.settlement:
+                            self.add_resources(vertex.owner, [tile.resource])
+                        if vertex.building == Building.city:
+                            self.add_resources(vertex.owner, [tile.resource, tile.resource])
+
 
 
 
