@@ -1,7 +1,8 @@
 '''
 
 '''
+from board_config import *
 
 class Vertex:
-    def __init__(self, id: int, neighbor_tiles, neighbor_vertices):
-        pass
+    def __init__(self):
+        self.building = Building.none

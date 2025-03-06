@@ -1,3 +1,5 @@
+from enum import enum
+
 # Adjacency List representing vertices and their neighbors
 """
         0 1 2
@@ -91,6 +93,9 @@ TILE_ADJACENCY = [
     [39,43,44,47,48,51],
     [40,44,45,48,49,52],
     [41,45,46,49,50,53]
-
-
 ]
+
+class Building(enum):
+    none = 0
+    settlement = 1
+    city = 2
