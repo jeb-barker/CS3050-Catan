@@ -22,6 +22,7 @@ class Board:
         self.resource_bank = []
         self.development_cards = []
 
+
         self.beginner_setup()
 
     def beginner_setup(self):
@@ -72,3 +73,17 @@ class Board:
         for tile in self.tiles:
             if tile.coords == coords:
                 return tile
+    
+    # check winning conditions
+
+    # place road
+
+    # place on vertex
+
+    # start turn: roll die/distribute resources
+
+    # trading
+
+    # adding/removing cards from hand
+
+
