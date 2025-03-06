@@ -78,8 +78,17 @@ class Board:
 
     # place road
     def place_road(self, owner, vertex1, vertex2):
-        """ Place road between two vertices """
-        self.roads.append(road.Road(owner=owner, vertex1=vertex1, vertex2=vertex2))
+        """ Place road between two vertices. Returns true if successful
+         and returns false if a road already exists in that location """
+        # Check if road exists between two vertices already
+        for road in self.roads:
+            if road.vertex1 == vertex1 and road.vertex2 == vertex2:
+                return False
+            elif road.vertex1 == vertex2 and road.vertex2 == vertex1:
+                return False
+            else:
+                self.roads.append(Road(owner=owner, vertex1=vertex1, vertex2=vertex2))
+                return True
 
     # place on vertex
 
