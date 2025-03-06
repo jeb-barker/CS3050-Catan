@@ -1,14 +1,19 @@
 import pyglet
 from pyglet.gl import *
+from board import Board
 
 class Renderer(pyglet.window.Window):
     
+    # ratio of tile height to screen height
+    TILE_SCALE = 0.1
+
     def __init__(self, board):
         super().__init__(width=1280, height=720, caption="Catan")
         
-        self.board = board
+        self.board = Board()
         self.tiles_batch = pyglet.graphics.Batch()
         self.gen_nums_batch = pyglet.graphics.Batch()
+        self.load_tiles_batch()
         
 
 
@@ -26,19 +31,26 @@ class Renderer(pyglet.window.Window):
 
 
     def load_tiles_batch(self):
-        hills_tile_img     = pyglet.image.load("/assets/hill.png")
-        forest_tile_img    = pyglet.image.load("/assets/forest.png")
-        mountains_tile_img = pyglet.image.load("/assets/mountain.png")
-        fields_tile_img    = pyglet.image.load("/assets/field.png")
-        pasture_tile_img   = pyglet.image.load("/assets/pasture.png")
-        desert_tile_img    = pyglet.image.load("/assets/desert.png")
+        mountains_tile_img = pyglet.image.load("assets/mountain.png")
+        fields_tile_img    = pyglet.image.load("assets/field.png")
+        pasture_tile_img   = pyglet.image.load("assets/pasture.png")
+        hills_tile_img     = pyglet.image.load("assets/hill.png")
+        forest_tile_img    = pyglet.image.load("assets/forest.png")
+        desert_tile_img    = pyglet.image.load("assets/desert.png")
+        images = [mountains_tile_img, fields_tile_img, pasture_tile_img, 
+                  hills_tile_img, forest_tile_img, desert_tile_img]
+
+        # assume all images are the same size and calculate the scale factor for the sprite
+        
+        scale = 0.2
         self.tile_sprites = []        
 
-        for tile in board.tiles:
-            image = 1#? # make list of tiles and index in tile enum value
-            x = 2#? # compute based on tile coord displacement from center
-            y = 3#? # same as x
-            sprite = pyglet.sprite.Sprite(image, batch=batch, x=x, y=y)
+        for tile in self.board.tiles:
+            image = images[tile.resource.value]
+            x = 0#? # compute based on tile coord displacement from center
+            y = 0#? # same as x
+            sprite = pyglet.sprite.Sprite(image, batch=self.tiles_batch, x=x, y=y)
+            sprite.scale = scale
             self.tile_sprites.append(sprite)
     
 
