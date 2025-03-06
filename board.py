@@ -86,9 +86,12 @@ class Board:
                 return False
             elif road.vertex1 == vertex2 and road.vertex2 == vertex1:
                 return False
+            elif vertex1 == vertex2:
+                return False
             else:
-                self.roads.append(Road(owner=owner, vertex1=vertex1, vertex2=vertex2))
-                return True
+                if vertex2 in VERTEX_ADJACENCY[road.vertex1]:
+                    self.roads.append(Road(owner=owner, vertex1=vertex1, vertex2=vertex2))
+                    return True
 
     # place on vertex
 
