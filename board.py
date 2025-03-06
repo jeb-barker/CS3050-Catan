@@ -152,7 +152,7 @@ class Board:
 
     def remove_resources(self, player, resources: list[Resource]):
         for resource in resources:
-
+            pass
     # check winning conditions
 
 
