@@ -1,3 +1,4 @@
+import math
 import pyglet
 from pyglet.gl import *
 from board import Board
@@ -57,8 +58,14 @@ class Renderer(pyglet.window.Window):
         for tile in self.board.tiles:
             image = images[tile.resource.value]
             axial_x, axial_y = tile.coords
-            x = center_x + (axial_x * tile_width)
-            y = center_y + (axial_y * tile_height)
+
+            # What we originally had: doesn't work properly
+            # x = center_x + (axial_x * tile_width)
+            # y = center_y + (axial_y * tile_height)
+
+            # good starting point: but uses some magic numbers to get the spacing right.
+            x = tile_width * (axial_x + axial_y / 2) + center_x - tile_height/2
+            y = tile_height * 3.2 / 2 * axial_y + center_y - tile_height/2
            
             sprite = pyglet.sprite.Sprite(image, batch=self.tiles_batch, x=x, y=y)
             sprite.scale = scale

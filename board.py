@@ -136,12 +136,17 @@ class Board:
     # trading
 
     # adding/removing cards from hand -> maybe move to Player class
-    def add_resources(self, player, cards: list[Card]):
-        for card in cards:
+    def add_resources(self, player, resources: list[Resource]):
+        drawn_cards = self.draw_resources(resources)
+
+
+    def draw_resources(self, resources: list[Resource]) -> list[Card]:
+        hand = []
+        for resource in resources:
             if len(self.resource_bank) > 0:
-                return self.resource_bank.pop()
-            else:
-                return None
+                hand.append(Card(resource.value))
+        return hand
+            
 
     def draw_development_card(self, player, card):
         if len(self.development_cards) > 0:
