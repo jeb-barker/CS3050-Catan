@@ -22,7 +22,7 @@ class Board:
         self.tiles = []
         self.vertices = []
         self.roads = []
-        self.resource_bank = []
+        self.resource_bank = {} # maps resource enum values (i.e. Resource.wheat) to a list of cards 
         self.development_cards = []
 
         self.beginner_setup()
@@ -138,19 +138,21 @@ class Board:
     # adding/removing cards from hand -> maybe move to Player class
     def add_resources(self, player, resources: list[Resource]):
         drawn_cards = self.draw_resources(resources)
+        for card in drawn_cards:
+            player.resources.append(card)
 
 
     def draw_resources(self, resources: list[Resource]) -> list[Card]:
         hand = []
         for resource in resources:
-            if len(self.resource_bank) > 0:
-                hand.append(Card(resource.value))
+            if len(self.resource_bank[resource.value]) > 0:
+                hand.append(self.resource_bank[resource.value].pop())
         return hand
             
 
     def draw_development_card(self, player, card):
         if len(self.development_cards) > 0:
-            return self.development_cards.pop()
+            player.development_cards.append(self.development_cards.pop())
         else:
             return None
         
