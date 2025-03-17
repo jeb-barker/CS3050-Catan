@@ -22,7 +22,7 @@ class Board:
         self.tiles = []
         self.vertices = []
         self.roads = []
-        self.resource_bank = []
+        self.resource_bank = {} # maps resource enum values (i.e. Resource.wheat) to a list of cards 
         self.development_cards = []
 
         self.beginner_setup()
@@ -125,40 +125,41 @@ class Board:
         # Roll dice first
         die1 = random.randint(1,6)
         die2 = random.randint(1,6)
-        roll = die1 + die2
+        roll = die1, die2
 
         # Distribute resources
-        # TODO: Don't give players resources if there aren't enough for all players
-        for tile in self.tiles:
-            if tile.genNum == roll:
-                for vertex in TILE_ADJACENCY:
-                    if vertex.owner in self.players:
-                        if vertex.building == Building.settlement:
-                            self.add_resources(vertex.owner, [tile.resource])
-                        if vertex.building == Building.city:
-                            self.add_resources(vertex.owner, [tile.resource, tile.resource])
-
-
+        for player in self.players:
+            pass
 
 
 
     # trading
 
     # adding/removing cards from hand -> maybe move to Player class
-    def add_resources(self, player, cards: list[Card]):
-        for card in cards:
-            player.resources.append()
+    def add_resources(self, player, resources: list[Resource]):
+        drawn_cards = self.draw_resources(resources)
+        for card in drawn_cards:
+            player.resources.append(card)
+
+
+    def draw_resources(self, resources: list[Resource]) -> list[Card]:
+        hand = []
+        for resource in resources:
+            if len(self.resource_bank[resource.value]) > 0:
+                hand.append(self.resource_bank[resource.value].pop())
+        return hand
+            
 
     def draw_development_card(self, player, card):
-        if len(self.resource_bank) > 0:
-            return self.resource_bank.pop()
+        if len(self.development_cards) > 0:
+            player.development_cards.append(self.development_cards.pop())
         else:
             return None
         
 
     def remove_resources(self, player, resources: list[Resource]):
         for resource in resources:
-
+            pass
     # check winning conditions
 
 
