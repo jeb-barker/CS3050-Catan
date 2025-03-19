@@ -1,4 +1,4 @@
-
+from texture_enums import *
 
 class Player:
     """
@@ -10,17 +10,17 @@ class Player:
     def __init__(self, player_id, color):
         self.player_id = player_id
         self.color = color
-        self.resource_cards = []
+        self.resources = []
         self.dev_cards = []
 
-    def add_resource_card(self, type):
-        pass
+    # Returns boolean based on if player has certain quantity of a given resource
+    def has_resources(self, type, quantity):
+        sum = 0
+        for i in self.resources:
+            if i == type:
+                sum += 1
 
-    def remove_resource_card(self, type):
-        pass
+        if sum >= quantity:
+            return True
+        return False
 
-    def add_development_card(self, type):
-        pass
-
-    def remove_development_card(self, type):
-        pass
