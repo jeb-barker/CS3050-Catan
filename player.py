@@ -1,4 +1,4 @@
-
+from texture_enums import *
 
 class Player:
     """
@@ -13,14 +13,5 @@ class Player:
         self.resource_cards = []
         self.dev_cards = []
 
-    def add_resource_card(self, type):
-        pass
-
-    def remove_resource_card(self, type):
-        pass
-
-    def add_development_card(self, type):
-        pass
-
-    def remove_development_card(self, type):
-        pass
+   def has_resources(self, type, quantity):
+       pass
