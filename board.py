@@ -65,7 +65,6 @@ class Board:
         ]
 
         # Vertices left to right, top to bottom
-
         for i in range(19):
             self.tiles.append(tile.Tile(coords=tile_coords[i], genNum=tile_gen_nums[i], resource=tile_resources[i]))
 
