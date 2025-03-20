@@ -65,7 +65,6 @@ class Board:
         ]
 
         # Vertices left to right, top to bottom
-
         for i in range(19):
             self.tiles.append(tile.Tile(coords=tile_coords[i], genNum=tile_gen_nums[i], resource=tile_resources[i]))
 
@@ -112,6 +111,23 @@ class Board:
             return 0
         else:
             return -1
+        
+    # Is the given vertex_index a valid place for a settlement
+    def is_valid_settle_spot(self, vertex_index):
+        vertex = self.vertices[vertex_index]
+        # check if city or settlement is there already:
+        if vertex.building != Building.none:
+            return False
+        # check if city or settlement is one vertex away (see catan rules for more info)
+        for neighbor_vertex_index in VERTEX_ADJACENCY[vertex]:
+            if self.vertices[neighbor_vertex_index].building != Building.none:
+                return False
+        return True
+    
+    # Is the given edge a valid place for a player to place a road
+    # Is the given vertex_index a valid place for a settlement
+    def is_valid_road_spot(self, vertex_index):
+        pass
 
     # start turn: roll die/distribute resources
     def start_turn(self, player):
