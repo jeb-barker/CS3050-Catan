@@ -24,3 +24,9 @@ class Player:
             return True
         return False
 
+    def remove_resource(self, resource):
+        """Removes one instance of a resource from the player's hand if available."""
+        if resource in self.resources:
+            self.resources.remove(resource)
+            return True
+        return False
