@@ -2,6 +2,7 @@ import math
 import pyglet
 from pyglet.gl import *
 from board import Board
+from texture_enums import Resource
 
 class Renderer(pyglet.window.Window):
     
@@ -31,22 +32,45 @@ class Renderer(pyglet.window.Window):
 
 
     def load_tiles_batch(self):
-        mountains_tile_img = pyglet.image.load("assets/mountain.png")
-        fields_tile_img    = pyglet.image.load("assets/field.png")
-        pasture_tile_img   = pyglet.image.load("assets/pasture.png")
-        hills_tile_img     = pyglet.image.load("assets/hill.png")
-        forest_tile_img    = pyglet.image.load("assets/forest.png")
-        desert_tile_img    = pyglet.image.load("assets/desert.png")
-        images = [mountains_tile_img, fields_tile_img, pasture_tile_img, 
-                  hills_tile_img, forest_tile_img, desert_tile_img]
+        mountains1_img = pyglet.image.load("assets/mountains1.png")
+        mountains2_img = pyglet.image.load("assets/mountains2.png")
+        mountains3_img = pyglet.image.load("assets/mountains3.png")
+        fields1_img    = pyglet.image.load("assets/fields1.png")
+        fields2_img    = pyglet.image.load("assets/fields2.png")
+        fields3_img    = pyglet.image.load("assets/fields3.png")
+        fields4_img    = pyglet.image.load("assets/fields4.png")
+        pasture1_img   = pyglet.image.load("assets/pasture1.png")
+        pasture2_img   = pyglet.image.load("assets/pasture2.png")
+        pasture3_img   = pyglet.image.load("assets/pasture3.png")
+        pasture4_img   = pyglet.image.load("assets/pasture4.png")
+        hills1_img     = pyglet.image.load("assets/hills1.png")
+        hills2_img     = pyglet.image.load("assets/hills2.png")
+        hills3_img     = pyglet.image.load("assets/hills3.png")
+        forest1_img    = pyglet.image.load("assets/forest1.png")
+        forest2_img    = pyglet.image.load("assets/forest2.png")
+        forest3_img    = pyglet.image.load("assets/forest3.png")
+        forest4_img    = pyglet.image.load("assets/forest4.png")
+        desert_img     = pyglet.image.load("assets/desert.png")
+
+        mountains_imgs = [mountains1_img, mountains2_img, mountains3_img]
+        fields_imgs = [fields1_img, fields2_img, fields3_img, fields4_img] 
+        pasture_imgs = [pasture1_img, pasture2_img, pasture3_img, pasture4_img]  
+        hills_imgs = [hills1_img, hills2_img, hills1_img] 
+        forest_imgs = [forest1_img, forest2_img, forest3_img, forest4_img] 
+
+        mountains_index = 0
+        fields_index = 0
+        pasture_index = 0
+        hills_index = 0
+        forest_index = 0
 
         # assume all images are the same size and calculate the scale factor for the sprite
        
-        image_width = images[0].width
-        image_height = images[0].height
+        image_width = desert_img.width
+        image_height = desert_img.height
 
         tile_width = self.TILE_SCALE * self.width 
-        tile_height = tile_width * image_height / self.height
+        tile_height = self.TILE_SCALE * self.height 
     
         scale = tile_width / image_width
 
@@ -56,7 +80,25 @@ class Renderer(pyglet.window.Window):
         center_y = self.height / 2 - tile_height / 2
 
         for tile in self.board.tiles:
-            image = images[tile.resource.value]
+            match tile.resource.value:
+                case 0: # stone
+                    image = mountains_imgs[mountains_index % len(mountains_imgs)]
+                    mountains_index += 1
+                case 1: # wheat
+                    image = fields_imgs[fields_index % len(fields_imgs)]
+                    fields_index += 1
+                case 2: # sheep
+                    image = pasture_imgs[pasture_index % len(pasture_imgs)]
+                    pasture_index += 1
+                case 3: # brick
+                    image = hills_imgs[hills_index % len(hills_imgs)]
+                    hills_index += 1
+                case 4: # wood
+                    image = forest_imgs[forest_index % len(forest_imgs)]
+                    forest_index += 1
+                case _: # none
+                    image = desert_img
+            
             axial_x, axial_y = tile.coords
 
             # What we originally had: doesn't work properly
