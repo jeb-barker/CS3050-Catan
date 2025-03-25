@@ -51,5 +51,3 @@ def get_neighbors_from_coordinate(coords: tuple[int,int]) -> list[tuple[int,int]
             neighbors.append((neighbor_x, neighbor_y))
     return neighbors
 
-
-print(get_neighbors_from_coordinate((0,0)))
