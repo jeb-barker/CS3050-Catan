@@ -64,18 +64,20 @@ class Renderer(pyglet.window.Window):
         hills_index = 0
         forest_index = 0
 
-        # assume all images are the same size and calculate the scale factor for the sprite
-       
+        # assume all images are the same size
         image_width = desert_img.width
         image_height = desert_img.height
 
+        # hexagon tile dimensions
         tile_width = self.TILE_SCALE * self.width 
-        tile_height = self.TILE_SCALE * self.height 
-    
+        tile_height = (image_height / image_width) * tile_width
+
+        # factor to scale tile images by
         scale = tile_width / image_width
 
         self.tile_sprites = []
- 
+
+        # coordinates of where to position central tile 
         center_x = self.width / 2 - tile_width / 2
         center_y = self.height / 2 - tile_height / 2
 
@@ -99,15 +101,20 @@ class Renderer(pyglet.window.Window):
                 case _: # none
                     image = desert_img
             
+            # axial coordinates specify a signed integer x, y offset from a (0, 0) center
             axial_x, axial_y = tile.coords
 
-            # What we originally had: doesn't work properly
-            # x = center_x + (axial_x * tile_width)
-            # y = center_y + (axial_y * tile_height)
-
-            # good starting point: but uses some magic numbers to get the spacing right.
-            x = tile_width * (axial_x + axial_y / 2) + center_x - tile_height/2
-            y = tile_height * 3.2 / 2 * axial_y + center_y - tile_height/2
+            # Tiles above the midline need to be shifted right, likewise below need to be shifted left.
+            # the axial_y / 2 term accounts for this shift. The reason for dividing by two is that
+            # the hexagon grid is staggered row to row for tesselation.
+            x = center_x + tile_width * (axial_x + axial_y / 2)
+            
+            # If you picture the largest rectangle you could draw within a hexagon,
+            # the height of that rectangle is 1/2 the height of the whole shape
+            # the pointed section above this rectangle fits into the above row of hexagons.
+            # the height of this upper section is 1/4 of the shape's height, meaning
+            # the row coordinate must be scaled by 3/4
+            y = center_y + tile_height * (axial_y * 0.75)
            
             sprite = pyglet.sprite.Sprite(image, batch=self.tiles_batch, x=x, y=y)
             sprite.scale = scale
