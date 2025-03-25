@@ -4,15 +4,18 @@ from pyglet.gl import *
 from board import Board
 from texture_enums import Resource
 
+from threading import Thread
+
 class Renderer(pyglet.window.Window):
     
     # ratio of tile height to screen height
     TILE_SCALE = 0.1
 
     def __init__(self, board):
-        super().__init__(width=2000, height=1000, caption="Catan")
+        super().__init__(width=3000, height=1500, caption="Catan")
         
         self.board = Board()
+        self.load_images()
         self.tiles_batch = pyglet.graphics.Batch()
         self.gen_nums_batch = pyglet.graphics.Batch()
         self.load_tiles_batch()
@@ -31,32 +34,56 @@ class Renderer(pyglet.window.Window):
         self.gen_nums_batch.draw()
 
 
-    def load_tiles_batch(self):
-        mountains1_img = pyglet.image.load("assets/mountains1.png")
-        mountains2_img = pyglet.image.load("assets/mountains2.png")
-        mountains3_img = pyglet.image.load("assets/mountains3.png")
-        fields1_img    = pyglet.image.load("assets/fields1.png")
-        fields2_img    = pyglet.image.load("assets/fields2.png")
-        fields3_img    = pyglet.image.load("assets/fields3.png")
-        fields4_img    = pyglet.image.load("assets/fields4.png")
-        pasture1_img   = pyglet.image.load("assets/pasture1.png")
-        pasture2_img   = pyglet.image.load("assets/pasture2.png")
-        pasture3_img   = pyglet.image.load("assets/pasture3.png")
-        pasture4_img   = pyglet.image.load("assets/pasture4.png")
-        hills1_img     = pyglet.image.load("assets/hills1.png")
-        hills2_img     = pyglet.image.load("assets/hills2.png")
-        hills3_img     = pyglet.image.load("assets/hills3.png")
-        forest1_img    = pyglet.image.load("assets/forest1.png")
-        forest2_img    = pyglet.image.load("assets/forest2.png")
-        forest3_img    = pyglet.image.load("assets/forest3.png")
-        forest4_img    = pyglet.image.load("assets/forest4.png")
-        desert_img     = pyglet.image.load("assets/desert.png")
+    def load_images(self):
+        self.image_names = [
+            "assets/mountains1.png",
+            "assets/mountains2.png",
+            "assets/mountains3.png",
+            "assets/fields1.png",
+            "assets/fields2.png",
+            "assets/fields3.png",
+            "assets/fields4.png",
+            "assets/pasture1.png",
+            "assets/pasture2.png",
+            "assets/pasture3.png",
+            "assets/pasture4.png",
+            "assets/hills1.png",
+            "assets/hills2.png",
+            "assets/hills3.png",
+            "assets/forest1.png",
+            "assets/forest2.png",
+            "assets/forest3.png",
+            "assets/forest4.png",
+            "assets/desert.png",
+        ]
+        image_count = len(self.image_names)
+        self.images = [None for _ in range(image_count)]
+        threads = [None for _ in range(image_count)]
+        for i in range(image_count):
+            threads[i] = Thread(target=self.load_image, args=(i,))
+            threads[i].start()
+        
+        for thread in threads:
+            thread.join() 
 
-        mountains_imgs = [mountains1_img, mountains2_img, mountains3_img]
-        fields_imgs = [fields1_img, fields2_img, fields3_img, fields4_img] 
-        pasture_imgs = [pasture1_img, pasture2_img, pasture3_img, pasture4_img]  
-        hills_imgs = [hills1_img, hills2_img, hills1_img] 
-        forest_imgs = [forest1_img, forest2_img, forest3_img, forest4_img] 
+    def load_image(self, image_index):
+        self.images[image_index] = pyglet.image.load(self.image_names[image_index])
+
+
+    def draw_resource_cards(self, player_id):
+        # list of player's resources
+        resources = self.board.players[player_id]
+
+        
+        
+
+    def load_tiles_batch(self):
+        mountains_imgs = self.images[0:3]
+        fields_imgs = self.images[3:7] 
+        pasture_imgs = self.images[7:11] 
+        hills_imgs = self.images[11:14] 
+        forest_imgs = self.images[14:18]
+        desert_img = self.images[18] 
 
         mountains_index = 0
         fields_index = 0
@@ -119,6 +146,8 @@ class Renderer(pyglet.window.Window):
             sprite = pyglet.sprite.Sprite(image, batch=self.tiles_batch, x=x, y=y)
             sprite.scale = scale
             self.tile_sprites.append(sprite)
+
+
     
 
 renderer = Renderer(None)
