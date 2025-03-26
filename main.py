@@ -1,14 +1,13 @@
 import pyglet
-from pyglet.gl import *
-import tile
+from render import Renderer
 
 if __name__ == "__main__": 
-    window = pyglet.window.Window()
-    t = tile.Tile((0,0))
+    config = pyglet.gl.Config(sample_buffers=1, samples=8, double_buffer=True)
+    window = pyglet.window.Window(config=config, width=3000, height=1500, caption="Catan")
+    renderer = Renderer(window)
 
     @window.event
     def on_draw():
-        glClear(GL_COLOR_BUFFER_BIT)
-        t.draw_tile(window.width/2,window.height/2, 50)
-
+        renderer.update()
+    
     pyglet.app.run()

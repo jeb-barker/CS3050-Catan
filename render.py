@@ -16,9 +16,9 @@ from texture_enums import Resource
 from player import Player
 
 
-class Renderer(pyglet.window.Window):
+class Renderer():
     """
-    Overloaded instance of pyglet window that implements window creation and rendering
+    Object used to load and draw the game on screen
     """
     # TODO(eli) replace this crude scale factors with rectangles that define areas in the layout
     # these will have a bottom-left corner, and width and height
@@ -30,10 +30,8 @@ class Renderer(pyglet.window.Window):
     CARD_SCALE = 0.06
 
 
-    def __init__(self, board=None):
-        config = pyglet.gl.Config(sample_buffers=1, samples=8, double_buffer=True)
-        super().__init__(config=config, width=3000, height=1500, caption="Catan")
-
+    def __init__(self, window, board=None):
+        self.window = window
         # test player is TEMPORARY
         test_player = Player(0, "red") # color will likely be an enum later
         test_player.resources = [Resource.ore, Resource.sheep, Resource.wheat,
@@ -51,7 +49,8 @@ class Renderer(pyglet.window.Window):
         self.load_card_sprites()
 
 
-    def on_draw(self):
+    def update(self):
+        """Function to update the screen"""
         # clear screen
         glClearColor(0.7, 0.8, 1.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
@@ -147,7 +146,7 @@ class Renderer(pyglet.window.Window):
         #image_height = resource_imgs[0].height
 
         # hexagon tile dimensions
-        card_width = self.CARD_SCALE * self.width
+        card_width = self.CARD_SCALE * self.window.width
         #card_height = (image_height / image_width) * card_width
 
         # factor to scale tile images by
@@ -189,7 +188,7 @@ class Renderer(pyglet.window.Window):
         tile_image_height = desert_img.height
 
         # hexagon tile dimensions
-        tile_width = self.TILE_SCALE * self.width
+        tile_width = self.TILE_SCALE * self.window.width
         tile_height = (tile_image_height / tile_image_width) * tile_width
 
         # factor to scale tile images by
@@ -213,8 +212,8 @@ class Renderer(pyglet.window.Window):
         self.gen_num_sprites = []
 
         # coordinates of where to position central tile
-        center_x = self.width / 2 - tile_width / 2
-        center_y = self.height / 2 - tile_height / 2
+        center_x = self.window.width / 2 - tile_width / 2
+        center_y = self.window.height / 2 - tile_height / 2
 
         for tile in self.board.tiles:
             match tile.resource:
@@ -268,7 +267,3 @@ class Renderer(pyglet.window.Window):
                 gen_num_sprite.scale = gen_num_scale
                 self.gen_num_sprites.append(gen_num_sprite)
 
-
-
-renderer = Renderer(None)
-pyglet.app.run()
