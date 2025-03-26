@@ -211,7 +211,7 @@ class Renderer():
         #image_height = resource_imgs[0].height
 
         # These will be about half as small as the regular resource cards
-        card_width = self.CARD_SCALE * self.width / 2
+        card_width = self.CARD_SCALE * self.window.width / 2
         #card_height = (image_height / image_width) * card_width
 
         # factor to scale tile images by
@@ -227,8 +227,8 @@ class Renderer():
 
         # from 5 --> 1
         for i in range(5, 0, -1):
-            x = self.width - (padding + card_width * i)
-            y = padding + self.height / 2
+            x = self.window.width - (padding + card_width * i)
+            y = padding + self.window.height / 2
             sprite = pyglet.sprite.Sprite(resource_imgs[i-1], x=x, y=y)
             sprite.scale = scale
             self.bank_sprites.append(sprite)
