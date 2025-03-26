@@ -14,6 +14,7 @@ class Player:
         self.color = color
         self.resources = []
         self.dev_cards = []
+        self.vps = 0
 
     def has_resources(self, resources: list[Resource]):
         """Returns true if the player has the resources in the quantities supplied"""

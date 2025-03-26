@@ -49,6 +49,7 @@ class Renderer(pyglet.window.Window):
         self.gen_num_batch = pyglet.graphics.Batch()
         self.load_tiles_batch()
         self.load_card_sprites()
+        self.load_bank_sprites()
 
 
     def on_draw(self):
@@ -64,6 +65,10 @@ class Renderer(pyglet.window.Window):
         self.gen_num_batch.draw()
         # draw the cards in player 0's hand
         self.draw_player_cards(0)
+        # draw the bank
+        labels = self.draw_bank_cards()
+        for label in labels:
+            label.draw()
 
 
     def draw_player_cards(self, player_id):
@@ -82,6 +87,36 @@ class Renderer(pyglet.window.Window):
 
 
         # TODO draw development cards
+
+
+    def draw_bank_cards(self) -> list[pyglet.text.Label]:
+        """Draw resource and development cards still in the bank"""
+        resource_bank = self.board.resource_bank
+        # integer quantity of each of the five resources in the resource list
+        resource_counts = [0 for _ in range(5)]
+        for resource in resource_bank.keys():
+            resource_counts[resource.value] = len(resource_bank[resource])
+
+        labels = []
+        for i in range(5):
+            label = pyglet.text.Label()
+            if resource_counts[i] > 0:
+                # TODO maybe add x scaling to fill from left, rather than have fixed places
+                self.bank_sprites[i].draw()
+                # TODO draw number over card representing resource_counts[i]
+                x = self.bank_sprites[i].x
+                y = self.bank_sprites[i].y
+                width = self.bank_sprites[i].width
+                height = self.bank_sprites[i].height
+                label = pyglet.text.Label(str(resource_counts[i]),
+                          font_name='Times New Roman',
+                          font_size=25,
+                          weight=5,
+                          x=x+(width*.75), y=y+(height*.85),
+                          anchor_x='center', anchor_y='center')
+            labels.append(label)
+        return labels
+
 
 
 
@@ -167,6 +202,37 @@ class Renderer(pyglet.window.Window):
             sprite = pyglet.sprite.Sprite(resource_imgs[i], x=x, y=y)
             sprite.scale = scale
             self.card_sprites.append(sprite)
+
+    def load_bank_sprites(self):
+        """Create and scale sprites corresponding to sprite images for each card image"""
+        resource_imgs = self.images[29:34]
+
+        # assume all card images are the same size
+        image_width = resource_imgs[0].width
+        #image_height = resource_imgs[0].height
+
+        # These will be about half as small as the regular resource cards
+        card_width = self.CARD_SCALE * self.width / 2
+        #card_height = (image_height / image_width) * card_width
+
+        # factor to scale tile images by
+        scale = card_width / image_width
+
+        self.bank_sprites = []
+
+        # TODO the spacing and position needs work to actually look good
+        # what is here is mainly just something to get the imgs up on screen
+
+        # just a little spacing to make things look more normal
+        padding = card_width / 30
+
+        # from 5 --> 1
+        for i in range(5, 0, -1):
+            x = self.width - (padding + card_width * i)
+            y = padding + self.height / 2
+            sprite = pyglet.sprite.Sprite(resource_imgs[i-1], x=x, y=y)
+            sprite.scale = scale
+            self.bank_sprites.append(sprite)
 
     def load_tiles_batch(self):
         """Create, position, and scale sprites for tiles and gen nums"""

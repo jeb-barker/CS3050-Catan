@@ -67,6 +67,11 @@ class Board:
         # Vertices left to right, top to bottom
         for i in range(19):
             self.tiles.append(tile.Tile(coords=tile_coords[i], gen_num=tile_gen_nums[i], resource=tile_resources[i]))
+        
+        # Set up the resource bank
+        for resource in [Resource.brick, Resource.ore, Resource.sheep, Resource.wheat, Resource.wood]:
+            # Add 19 of each resource type to the board's bank
+            self.resource_bank[resource] = [Card(resource.value) for _ in range(19)]
 
 
     def get_tile_at(self, coords):
@@ -94,23 +99,20 @@ class Board:
                     return True
 
     # place building at the given vertex_index
-    # returns -1 if there's an error or the placement is invalid
+    # returns False if there's an error or the placement is invalid otherwise, returns True
     def place_building(self, building, owner, vertex_index):
         vertex = self.vertices[vertex_index]
-        # check if city or settlement is there already:
-        if vertex.building != Building.none:
-            return -1
-        # check if city or settlement is one vertex away (see catan rules for more info)
-        for neighbor_vertex_index in VERTEX_ADJACENCY[vertex]:
-            if self.vertices[neighbor_vertex_index].building != Building.none:
-                return -1
-        # case if placing a settlement or city
-        if building == Building.settlement or building == Building.city:
-            self.vertices[vertex_index].owner = owner
-            self.vertices[vertex_index].building = building
-            return 0
+        if self.is_valid_settle_spot(vertex_index):
+            # case if placing a settlement or city
+            if building == Building.settlement or building == Building.city:
+                self.vertices[vertex_index].owner = owner
+                self.vertices[vertex_index].building = building
+                return True
+            else:
+                return False
         else:
-            return -1
+            return False
+        
         
     # Is the given vertex_index a valid place for a settlement
     def is_valid_settle_spot(self, vertex_index):
