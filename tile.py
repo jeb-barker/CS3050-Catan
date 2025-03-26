@@ -6,13 +6,13 @@ class Tile:
     """
     coords (axial coordinate of the Tile in the board)
     neighbors (int[] contains ids of neighboring Hexagons)
-    genNum (int the dice roll that causes this to generate resources)
+    gen_num (int the dice roll that causes this to generate resources)
     resource (the resource (i.e. sheep, wheat, ore, brick, wood) that this tile generates)
     resourceTexture (the image shown on the tile)
     vertices (int[] contains ids of the vertices on this hexagon)
     edges (int[] the index in the edges array)
     """
-    def __init__(self, coords: tuple[int,int], vertices=[], edges=[], genNum= -1, resource=Resource.desert, resourceTexture= ""):
+    def __init__(self, coords: tuple[int,int], vertices=[], edges=[], gen_num= -1, resource=Resource.desert, resourceTexture= ""):
         # Ensure that given coordinate is within the catan board.
         assert abs(coords[0] + coords[1]) <= 2
 
@@ -20,7 +20,7 @@ class Tile:
         self.neighbors = get_neighbors_from_coordinate(coords)
         self.vertices = vertices
         self.edges = edges
-        self.genNum = genNum
+        self.gen_num = gen_num
         self.resource = resource
         self.resourceTexture = resourceTexture
     
