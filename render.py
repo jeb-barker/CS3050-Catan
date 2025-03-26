@@ -1,21 +1,32 @@
-import math
+"""
+Window creation
+Texture loading, positioning and scaling
+"""
+
+from threading import Thread
+
 import pyglet
-from pyglet.gl import *
+from pyglet.gl import (
+    glClearColor, glClear, glEnable, glBlendFunc,
+    GL_BLEND, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_COLOR_BUFFER_BIT
+)
+
 from board import Board
 from texture_enums import Resource
 from player import Player
 
-from threading import Thread
 
 class Renderer(pyglet.window.Window):
-    
+    """
+    Overloaded instance of pyglet window that implements window creation and rendering
+    """
     # TODO(eli) replace this crude scale factors with rectangles that define areas in the layout
     # these will have a bottom-left corner, and width and height
     # scale will be computed based on the bounds of these boxes
 
-    # ratio of tile width to screen width 
+    # ratio of tile width to screen width
     TILE_SCALE = 0.075
-    # ratio of card width to screen width 
+    # ratio of card width to screen width
     CARD_SCALE = 0.06
 
 
@@ -25,7 +36,8 @@ class Renderer(pyglet.window.Window):
 
         # test player is TEMPORARY
         test_player = Player(0, "red") # color will likely be an enum later
-        test_player.resources = [Resource.ore, Resource.sheep, Resource.wheat, Resource.brick, Resource.wood]
+        test_player.resources = [Resource.ore, Resource.sheep, Resource.wheat,
+                                 Resource.brick, Resource.wood]
 
         self.board = Board()
 
@@ -51,28 +63,29 @@ class Renderer(pyglet.window.Window):
         self.gen_num_batch.draw()
         # draw the cards in player 0's hand
         self.draw_player_cards(0)
-    
+
 
     def draw_player_cards(self, player_id):
-        
+        """Draw resource, development, and victory point cards in a player's hand""" 
         resources = self.board.players[player_id].resources
         # integer quantity of each of the five resources in the resource list
         resource_counts = [0 for _ in range(5)]
         for resource in resources:
             resource_counts[resource.value] += 1
-        
+
         for i in range(5):
             if resource_counts[i] > 0:
                 # TODO maybe add x scaling to fill from left, rather than have fixed places
                 self.card_sprites[i].draw()
                 # TODO draw number over card representing resource_counts[i]
-        
+
 
         # TODO draw development cards
-                
+ 
 
 
     def load_images(self):
+        """Multithreaded image loading for all textures used in rendering"""
         self.image_names = [
             "assets/mountains1.png",
             "assets/mountains2.png",
@@ -115,9 +128,9 @@ class Renderer(pyglet.window.Window):
         for i in range(image_count):
             threads[i] = Thread(target=self.load_image, args=(i,))
             threads[i].start()
-        
+
         for thread in threads:
-            thread.join() 
+            thread.join()
 
 
     def load_image(self, image_index):
@@ -125,27 +138,28 @@ class Renderer(pyglet.window.Window):
         self.images[image_index] = pyglet.image.load(self.image_names[image_index])
 
     def load_card_sprites(self):
-        resource_imgs = self.images[29:34] 
-        
+        """Create and scale sprites corresponding to sprite images for each card image"""
+        resource_imgs = self.images[29:34]
+
         # assume all card images are the same size
         image_width = resource_imgs[0].width
-        image_height = resource_imgs[0].height
+        #image_height = resource_imgs[0].height
 
         # hexagon tile dimensions
-        card_width = self.CARD_SCALE * self.width 
-        card_height = (image_height / image_width) * card_width
+        card_width = self.CARD_SCALE * self.width
+        #card_height = (image_height / image_width) * card_width
 
         # factor to scale tile images by
         scale = card_width / image_width
 
         self.card_sprites = []
-       
+
         # TODO the spacing and position needs work to actually look good
         # what is here is mainly just something to get the imgs up on screen
- 
+
         # just a little spacing to make things look more normal   
         padding = card_width / 30
- 
+
         for i in range(5):
             x = padding + card_width * i
             y = padding
@@ -154,10 +168,11 @@ class Renderer(pyglet.window.Window):
             self.card_sprites.append(sprite)
 
     def load_tiles_batch(self):
+        """Create, position, and scale sprites for tiles and gen nums"""
         mountains_imgs = self.images[0:3]
-        fields_imgs = self.images[3:7] 
-        pasture_imgs = self.images[7:11] 
-        hills_imgs = self.images[11:14] 
+        fields_imgs = self.images[3:7]
+        pasture_imgs = self.images[7:11]
+        hills_imgs = self.images[11:14]
         forest_imgs = self.images[14:18]
         desert_img = self.images[18]
         gen_num_imgs = self.images[19:29]
@@ -173,7 +188,7 @@ class Renderer(pyglet.window.Window):
         tile_image_height = desert_img.height
 
         # hexagon tile dimensions
-        tile_width = self.TILE_SCALE * self.width 
+        tile_width = self.TILE_SCALE * self.width
         tile_height = (tile_image_height / tile_image_width) * tile_width
 
         # factor to scale tile images by
@@ -196,7 +211,7 @@ class Renderer(pyglet.window.Window):
         self.tile_sprites = []
         self.gen_num_sprites = []
 
-        # coordinates of where to position central tile 
+        # coordinates of where to position central tile
         center_x = self.width / 2 - tile_width / 2
         center_y = self.height / 2 - tile_height / 2
 
@@ -219,22 +234,22 @@ class Renderer(pyglet.window.Window):
                     forest_index += 1
                 case _: # none
                     tile_image = desert_img
-            
+
             # axial coordinates specify a signed integer x, y offset from a (0, 0) center
             axial_x, axial_y = tile.coords
 
-            # Tiles above the midline need to be shifted right, likewise below need to be shifted left.
+            # Tiles above the midline need to be shifted right, likewise below shifted left.
             # the axial_y / 2 term accounts for this shift. The reason for dividing by two is that
             # the hexagon grid is staggered row to row for tesselation.
             x = center_x + tile_width * (axial_x + axial_y / 2)
-            
+
             # If you picture the largest rectangle you could draw within a hexagon,
             # the height of that rectangle is 1/2 the height of the whole shape
             # the pointed section above this rectangle fits into the above row of hexagons.
             # the height of this upper section is 1/4 of the shape's height, meaning
             # the row coordinate must be scaled by 3/4
             y = center_y + tile_height * (axial_y * 0.75)
-           
+
             tile_sprite = pyglet.sprite.Sprite(tile_image, batch=self.tiles_batch, x=x, y=y)
             tile_sprite.scale = tile_scale
             self.tile_sprites.append(tile_sprite)
@@ -252,7 +267,6 @@ class Renderer(pyglet.window.Window):
                 self.gen_num_sprites.append(gen_num_sprite)
 
 
-    
 
 renderer = Renderer(None)
 pyglet.app.run()
