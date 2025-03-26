@@ -14,13 +14,15 @@ class Renderer(pyglet.window.Window):
     # scale will be computed based on the bounds of these boxes
 
     # ratio of tile width to screen width 
-    TILE_SCALE = 0.07
+    TILE_SCALE = 0.075
     # ratio of card width to screen width 
     CARD_SCALE = 0.06
 
 
     def __init__(self, board):
-        super().__init__(width=3000, height=1500, caption="Catan")
+        config = pyglet.gl.Config(sample_buffers=1, samples=8, double_buffer=True)
+        super().__init__(config=config, width=3000, height=1500, caption="Catan")
+
         # test player is TEMPORARY
         test_player = Player(0, "red") # color will likely be an enum later
         test_player.resources = [Resource.ore, Resource.sheep, Resource.wheat, Resource.brick, Resource.wood]
@@ -31,7 +33,7 @@ class Renderer(pyglet.window.Window):
 
         self.load_images()
         self.tiles_batch = pyglet.graphics.Batch()
-        self.gen_nums_batch = pyglet.graphics.Batch()
+        self.gen_num_batch = pyglet.graphics.Batch()
         self.load_tiles_batch()
         self.load_card_sprites()
 
@@ -46,7 +48,7 @@ class Renderer(pyglet.window.Window):
         # draw tiles
         self.tiles_batch.draw()
         # draw gen nums
-        self.gen_nums_batch.draw()
+        self.gen_num_batch.draw()
         # draw the cards in player 0's hand
         self.draw_player_cards(0)
     
@@ -91,6 +93,16 @@ class Renderer(pyglet.window.Window):
             "assets/forest3.png",
             "assets/forest4.png",
             "assets/desert.png",
+            "assets/gennum2.png",
+            "assets/gennum3.png",
+            "assets/gennum4.png",
+            "assets/gennum5.png",
+            "assets/gennum6.png",
+            "assets/gennum8.png",
+            "assets/gennum9.png",
+            "assets/gennum10.png",
+            "assets/gennum11.png",
+            "assets/gennum12.png",
             "assets/ore.png",
             "assets/wheat.png",
             "assets/sheep.png",
@@ -113,7 +125,7 @@ class Renderer(pyglet.window.Window):
         self.images[image_index] = pyglet.image.load(self.image_names[image_index])
 
     def load_card_sprites(self):
-        resource_imgs = self.images[19:24] 
+        resource_imgs = self.images[29:34] 
         
         # assume all card images are the same size
         image_width = resource_imgs[0].width
@@ -147,7 +159,8 @@ class Renderer(pyglet.window.Window):
         pasture_imgs = self.images[7:11] 
         hills_imgs = self.images[11:14] 
         forest_imgs = self.images[14:18]
-        desert_img = self.images[18] 
+        desert_img = self.images[18]
+        gen_num_imgs = self.images[19:29]
 
         mountains_index = 0
         fields_index = 0
@@ -156,17 +169,32 @@ class Renderer(pyglet.window.Window):
         forest_index = 0
 
         # assume all tile images are the same size
-        image_width = desert_img.width
-        image_height = desert_img.height
+        tile_image_width = desert_img.width
+        tile_image_height = desert_img.height
 
         # hexagon tile dimensions
         tile_width = self.TILE_SCALE * self.width 
-        tile_height = (image_height / image_width) * tile_width
+        tile_height = (tile_image_height / tile_image_width) * tile_width
 
         # factor to scale tile images by
-        scale = tile_width / image_width
+        tile_scale = tile_width / tile_image_width
 
+        gen_num_image_width = gen_num_imgs[0].width
+
+        # gen nums are sized relative to the tiles that contain them
+        gen_num_width = tile_width / 3
+        gen_num_height = tile_height / 3
+
+        # scale factor to adjust image by
+        gen_num_scale = gen_num_width / gen_num_image_width
+
+        # used to position gen num relevent to corresponding tile
+        gen_num_x_offset = (tile_width - gen_num_width) / 2
+        gen_num_y_offset = (tile_height - gen_num_height) / 2
+
+        # store tile and gen num sprites
         self.tile_sprites = []
+        self.gen_num_sprites = []
 
         # coordinates of where to position central tile 
         center_x = self.width / 2 - tile_width / 2
@@ -175,22 +203,22 @@ class Renderer(pyglet.window.Window):
         for tile in self.board.tiles:
             match tile.resource:
                 case Resource.ore:
-                    image = mountains_imgs[mountains_index % len(mountains_imgs)]
+                    tile_image = mountains_imgs[mountains_index % len(mountains_imgs)]
                     mountains_index += 1
                 case Resource.wheat:
-                    image = fields_imgs[fields_index % len(fields_imgs)]
+                    tile_image = fields_imgs[fields_index % len(fields_imgs)]
                     fields_index += 1
                 case Resource.sheep:
-                    image = pasture_imgs[pasture_index % len(pasture_imgs)]
+                    tile_image = pasture_imgs[pasture_index % len(pasture_imgs)]
                     pasture_index += 1
                 case Resource.brick:
-                    image = hills_imgs[hills_index % len(hills_imgs)]
+                    tile_image = hills_imgs[hills_index % len(hills_imgs)]
                     hills_index += 1
                 case Resource.wood:
-                    image = forest_imgs[forest_index % len(forest_imgs)]
+                    tile_image = forest_imgs[forest_index % len(forest_imgs)]
                     forest_index += 1
                 case _: # none
-                    image = desert_img
+                    tile_image = desert_img
             
             # axial coordinates specify a signed integer x, y offset from a (0, 0) center
             axial_x, axial_y = tile.coords
@@ -207,9 +235,21 @@ class Renderer(pyglet.window.Window):
             # the row coordinate must be scaled by 3/4
             y = center_y + tile_height * (axial_y * 0.75)
            
-            sprite = pyglet.sprite.Sprite(image, batch=self.tiles_batch, x=x, y=y)
-            sprite.scale = scale
-            self.tile_sprites.append(sprite)
+            tile_sprite = pyglet.sprite.Sprite(tile_image, batch=self.tiles_batch, x=x, y=y)
+            tile_sprite.scale = tile_scale
+            self.tile_sprites.append(tile_sprite)
+           
+            x += gen_num_x_offset
+            y += gen_num_y_offset
+            gen_num_image = None
+            if tile.gen_num >= 2 and tile.gen_num <= 6:
+                gen_num_image = gen_num_imgs[tile.gen_num - 2]
+            elif tile.gen_num >= 8 and tile.gen_num <= 12:
+                gen_num_image = gen_num_imgs[tile.gen_num - 3]
+            if gen_num_image:
+                gen_num_sprite = pyglet.sprite.Sprite(gen_num_image, batch=self.gen_num_batch, x=x, y=y)
+                gen_num_sprite.scale = gen_num_scale
+                self.gen_num_sprites.append(gen_num_sprite)
 
 
     
