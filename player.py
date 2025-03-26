@@ -1,4 +1,6 @@
-from texture_enums import *
+import copy
+
+from texture_enums import Resource
 
 class Player:
     """
@@ -13,16 +15,16 @@ class Player:
         self.resources = []
         self.dev_cards = []
 
-    # Returns boolean based on if player has certain quantity of a given resource
-    def has_resources(self, type, quantity):
-        sum = 0
-        for i in self.resources:
-            if i == type:
-                sum += 1
-
-        if sum >= quantity:
-            return True
-        return False
+    def has_resources(self, resources: list[Resource]):
+        """Returns true if the player has the resources in the quantities supplied"""
+        availible = copy.deepcopy(self.resources)
+        for resource in resources:
+            if resource in availible:
+                availible.remove(resource)
+            else:
+                return False
+ 
+        return True
 
     def remove_resource(self, resource):
         """Removes an instance of a resource from the player's hand if available."""
