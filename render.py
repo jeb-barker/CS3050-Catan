@@ -30,7 +30,7 @@ class Renderer(pyglet.window.Window):
     CARD_SCALE = 0.06
 
 
-    def __init__(self, board):
+    def __init__(self, board=None):
         config = pyglet.gl.Config(sample_buffers=1, samples=8, double_buffer=True)
         super().__init__(config=config, width=3000, height=1500, caption="Catan")
 
@@ -39,7 +39,8 @@ class Renderer(pyglet.window.Window):
         test_player.resources = [Resource.ore, Resource.sheep, Resource.wheat,
                                  Resource.brick, Resource.wood]
 
-        self.board = Board()
+        if board is None:
+            self.board = Board()
 
         self.board.players.append(test_player)
 
@@ -81,7 +82,7 @@ class Renderer(pyglet.window.Window):
 
 
         # TODO draw development cards
- 
+
 
 
     def load_images(self):
@@ -157,7 +158,7 @@ class Renderer(pyglet.window.Window):
         # TODO the spacing and position needs work to actually look good
         # what is here is mainly just something to get the imgs up on screen
 
-        # just a little spacing to make things look more normal   
+        # just a little spacing to make things look more normal
         padding = card_width / 30
 
         for i in range(5):
@@ -253,7 +254,7 @@ class Renderer(pyglet.window.Window):
             tile_sprite = pyglet.sprite.Sprite(tile_image, batch=self.tiles_batch, x=x, y=y)
             tile_sprite.scale = tile_scale
             self.tile_sprites.append(tile_sprite)
-           
+
             x += gen_num_x_offset
             y += gen_num_y_offset
             gen_num_image = None
@@ -262,7 +263,8 @@ class Renderer(pyglet.window.Window):
             elif tile.gen_num >= 8 and tile.gen_num <= 12:
                 gen_num_image = gen_num_imgs[tile.gen_num - 3]
             if gen_num_image:
-                gen_num_sprite = pyglet.sprite.Sprite(gen_num_image, batch=self.gen_num_batch, x=x, y=y)
+                gen_num_sprite = pyglet.sprite.Sprite(gen_num_image,
+                    batch=self.gen_num_batch, x=x, y=y)
                 gen_num_sprite.scale = gen_num_scale
                 self.gen_num_sprites.append(gen_num_sprite)
 
