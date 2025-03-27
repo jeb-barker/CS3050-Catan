@@ -81,10 +81,42 @@ class Board:
                 return tile
     
 
-    # place road
+    # Place a road, checking if it connects to an existing road, city or settlement
+    # owned by that player, that they have roads left and there isn't already
+    # a road at specified location
     def place_road(self, owner, vertex1, vertex2):
         """ Place road between two vertices. Returns true if successful
-         and returns false if a road already exists in that location """
+         and returns false if unable to place road """
+
+        # Check if player has less than 15 roads
+        if owner.numRoads == 0:
+            return False
+
+        # Bool indicating whether road is allowed
+        allowed = False
+
+        # Check if player has a road or city or settlement there already
+        # Check buildings first
+        if vertex1.owner == owner or vertex2.owner == owner:
+            if vertex1.building == Building.city or vertex1.building == Building.settlement:
+                allowed = True
+            elif vertex2.building == Building.city or vertex2.building == Building.settlement:
+                allowed = True
+
+        # Check for adjacent roads
+        for road in self.roads:
+            if road == owner:
+                if road.vertex1 == vertex1 or road.vertex2 == vertex1:
+                    allowed = True
+                    break
+                elif road.vertex2 == vertex1 or road.vertex2 == vertex2:
+                    allowed = True
+                    break
+
+        # Abort or allow to proceed based on allowed value
+        if allowed == False:
+            return False
+
         # Check if road exists between two vertices already
         for road in self.roads:
             if road.vertex1 == vertex1 and road.vertex2 == vertex2:
@@ -96,6 +128,7 @@ class Board:
             else:
                 if vertex2 in VERTEX_ADJACENCY[road.vertex1]:
                     self.roads.append(Road(owner=owner, vertex1=vertex1, vertex2=vertex2))
+                    owner.numRoads -= 1
                     return True
 
     # place building at the given vertex_index
@@ -143,7 +176,7 @@ class Board:
         # Roll dice first
         die1 = random.randint(1,6)
         die2 = random.randint(1,6)
-        roll = die1, die2
+        roll = die1 + die2
 
         # Distribute resources
         for player in self.players:
