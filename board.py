@@ -134,13 +134,30 @@ class Board:
     # place building at the given vertex_index
     # returns False if there's an error or the placement is invalid otherwise, returns True
     def place_building(self, building, owner, vertex_index):
+        # Check that player has settlements left in pool
+        if building == Building.city:
+            if owner.numCities == 0:
+                return False
+
+        if building == Building.settlement:
+            if owner.numSettlements == 0:
+                return False
+
         vertex = self.vertices[vertex_index]
         if self.is_valid_settle_spot(vertex_index):
             # case if placing a settlement or city
-            if building == Building.settlement or building == Building.city:
+            if building == Building.settlement:
                 self.vertices[vertex_index].owner = owner
                 self.vertices[vertex_index].building = building
+                owner.numSettlements -= 1
                 return True
+
+            elif building == Building.city:
+                self.vertices[vertex_index].owner = owner
+                self.vertices[vertex_index].building = building
+                owner.numCities -= 1
+                return True
+
             else:
                 return False
         else:
@@ -178,9 +195,16 @@ class Board:
         die2 = random.randint(1,6)
         roll = die1 + die2
 
+        # Determine resources to distribute
+        newResources = []
+
+        for tile in self.tiles:
+            if tile.genNum == roll:
+                newResources.append(tile.resource)
+
         # Distribute resources
         for player in self.players:
-            pass
+            self.add_resources(player, newResources)
 
 
 
@@ -211,6 +235,8 @@ class Board:
     def remove_resources(self, player, resources: list[Resource]):
         for resource in resources:
             pass
+
+
     # check winning conditions
 
 
