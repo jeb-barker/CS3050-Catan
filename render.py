@@ -110,7 +110,7 @@ class Renderer():
                 label = pyglet.text.Label(str(resource_counts[i]),
                           font_name='Times New Roman',
                           font_size=25,
-                          weight=5,
+        #                  weight=5,
                           x=x+(width*.75), y=y+(height*.85),
                           anchor_x='center', anchor_y='center')
             labels.append(label)
