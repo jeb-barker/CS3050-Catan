@@ -199,7 +199,7 @@ class Board:
         newResources = []
 
         for tile in self.tiles:
-            if tile.genNum == roll:
+            if tile.gen_num == roll:
                 newResources.append(tile.resource)
 
         # Distribute resources

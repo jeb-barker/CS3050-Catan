@@ -9,7 +9,9 @@ def on_click(x, y, renderer):
             match clickable.id:
                 case "add_resource":
                     renderer.board.add_resources(renderer.board.players[0], [Resource(4)])
+                case "roll_dice":
+                    # add the appropriate logic if needed
+                    pass
                 case "end_turn":
-                    pass  # logic to be implemented
-                case _:
+                    # Logic for ending the turn
                     pass
