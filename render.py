@@ -261,9 +261,9 @@ class Renderer():
 
         # from 5 --> 1
         for i in range(5):
-            x = self.window.width - (padding + card_width * (i+1))
+            x = self.window.width - (padding + card_width * (5-i))
             y = padding + self.window.height / 2
-            sprite = pyglet.sprite.Sprite(resource_imgs[i-1], x=x, y=y)
+            sprite = pyglet.sprite.Sprite(resource_imgs[i], x=x, y=y)
             sprite.scale = scale
             self.bank_sprites.append(sprite)
 
