@@ -8,6 +8,6 @@ def on_click(x, y, renderer):
         if clickable.contains((x,y)):
             match clickable.id:
                 case "add_resource":
-                    renderer.board.draw_resources(renderer.board.players[0], [Resource(4)])
+                    renderer.board.add_resources(renderer.board.players[0], [Resource(4)])
                 case _:
                     pass

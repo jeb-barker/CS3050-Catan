@@ -221,10 +221,10 @@ class Board:
         """Draw resources from the bank and return a list of returned resources"""
         hand = []
         for resource in resources:
-            if len(self.resource_bank[resource.value]) > 0:
-                hand.append(self.resource_bank[resource.value].pop())
+            if len(self.resource_bank[resource]) > 0:
+                hand.append(self.resource_bank[resource].pop())
         return hand
-            
+
 
     def draw_development_card(self, player, card):
         if len(self.development_cards) > 0:

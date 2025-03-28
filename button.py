@@ -8,6 +8,7 @@ class Button:
     Class to represent a button with either a point-radius (circle) or a bounding box (rectangle)
     """
     def __init__(self, is_circle: bool, center: tuple[int,int], radius=0, width=0, height=0, id=-1):
+        self.id = id
         self.is_circle = is_circle
         self.center = center
         # if the button is a circle...

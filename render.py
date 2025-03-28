@@ -352,7 +352,7 @@ class Renderer():
         label_background = pyglet.shapes.Rectangle(l_x, l_y, l_w, l_h, color=(0, 0, 0))
 
         return label_background, label
-    
+
     def init_buttons(self):
         """Initialize buttons. placeholder for now."""
         self.buttons.append(Button(False, (self.window.width/2, 5), width=10, height=10, id="add_resource"))
