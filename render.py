@@ -70,9 +70,7 @@ class Renderer():
         # draw the cards in player 0's hand
         self.draw_player_cards(0)
         # draw the bank
-        labels = self.draw_bank_cards()
-        for label in labels:
-            label.draw()
+        self.draw_bank_cards()
 
         self.draw_player_info()
 
@@ -90,6 +88,17 @@ class Renderer():
                 # TODO maybe add x scaling to fill from left, rather than have fixed places
                 self.card_sprites[i].draw()
                 # TODO draw number over card representing resource_counts[i]
+                x = self.card_sprites[i].x
+                y = self.card_sprites[i].y
+                width = self.card_sprites[i].width
+                height = self.card_sprites[i].height
+                label = pyglet.text.Label(str(resource_counts[i]),
+                          font_name='Times New Roman',
+                          font_size=40,
+        #                  weight=5,
+                          x=x+(width*.75), y=y+(height*.85),
+                          anchor_x='center', anchor_y='center')
+                label.draw()
 
 
         # TODO draw development cards
@@ -103,7 +112,6 @@ class Renderer():
         for resource in resource_bank.keys():
             resource_counts[resource.value] = len(resource_bank[resource])
 
-        labels = []
         for i in range(5):
             label = pyglet.text.Label()
             if resource_counts[i] > 0:
@@ -120,8 +128,8 @@ class Renderer():
         #                  weight=5,
                           x=x+(width*.75), y=y+(height*.85),
                           anchor_x='center', anchor_y='center')
-            labels.append(label)
-        return labels
+                label.draw()
+
 
     def draw_player_info(self):
         """Draw each sprite in the player_info_sprites"""
@@ -161,12 +169,22 @@ class Renderer():
             "assets/gennum10.png",
             "assets/gennum11.png",
             "assets/gennum12.png",
-            "assets/ore.png",
-            "assets/wheat.png",
+            "assets/ore.png", # 29
+            "assets/wheat.png", # 30
             "assets/sheep.png",
             "assets/brick.png",
             "assets/wood.png",
-            "assets/knight.png"
+            "assets/knight.png",
+            "assets/roadbuilding.png",
+            "assets/yearofplenty.png",
+            "assets/monopoly.png",
+            "assets/library.png",
+            "assets/market.png",
+            "assets/chapel.png", # 40
+            "assets/university.png",
+            "assets/palace.png",
+            "assets/palace.png", # longest_road place holder
+            "assets/palace.png", # largest army place holder
         ]
         image_count = len(self.image_names)
         self.images = [None for _ in range(image_count)]
@@ -185,10 +203,10 @@ class Renderer():
 
     def load_card_sprites(self):
         """Create and scale sprites corresponding to sprite images for each card image"""
-        resource_imgs = self.images[29:34]
+        card_imgs = self.images[29:45]
 
         # assume all card images are the same size
-        image_width = resource_imgs[0].width
+        image_width = card_imgs[0].width
         #image_height = resource_imgs[0].height
 
         # hexagon tile dimensions
@@ -206,10 +224,10 @@ class Renderer():
         # just a little spacing to make things look more normal
         padding = card_width / 30
 
-        for i in range(5):
+        for i, image in enumerate(card_imgs):
             x = padding + card_width * i
             y = padding
-            sprite = pyglet.sprite.Sprite(resource_imgs[i], x=x, y=y)
+            sprite = pyglet.sprite.Sprite(image, x=x, y=y)
             sprite.scale = scale
             self.card_sprites.append(sprite)
 
@@ -237,8 +255,8 @@ class Renderer():
         padding = card_width / 30
 
         # from 5 --> 1
-        for i in range(5, 0, -1):
-            x = self.window.width - (padding + card_width * i)
+        for i in range(5):
+            x = self.window.width - (padding + card_width * (i+1))
             y = padding + self.window.height / 2
             sprite = pyglet.sprite.Sprite(resource_imgs[i-1], x=x, y=y)
             sprite.scale = scale
