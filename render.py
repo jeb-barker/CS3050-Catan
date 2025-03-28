@@ -358,7 +358,6 @@ class Renderer():
     def init_buttons(self):
         """Initialize buttons. placeholder for now."""
         self.buttons.append(Button(False, (self.window.width/2, 5), width=10, height=10, id="add_resource"))
-        self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, id="roll_dice"))
 
 
     def load_tiles_batch(self):
