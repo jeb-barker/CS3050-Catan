@@ -1,12 +1,12 @@
 '''
 
 '''
-import road
-import tile
-from texture_enums import *
-from board_config import *
-from road import *
 import random
+from tile import Tile
+from texture_enums import Resource, Card
+from board_config import VERTEX_ADJACENCY, Building
+from road import Road
+
 
 class Board:
     """
@@ -66,7 +66,7 @@ class Board:
 
         # Vertices left to right, top to bottom
         for i in range(19):
-            self.tiles.append(tile.Tile(coords=tile_coords[i], gen_num=tile_gen_nums[i], resource=tile_resources[i]))
+            self.tiles.append(Tile(coords=tile_coords[i], gen_num=tile_gen_nums[i], resource=tile_resources[i]))
         
         # Set up the resource bank
         for resource in [Resource.brick, Resource.ore, Resource.sheep, Resource.wheat, Resource.wood]:
@@ -147,14 +147,14 @@ class Board:
         if self.is_valid_settle_spot(vertex_index):
             # case if placing a settlement or city
             if building == Building.settlement:
-                self.vertices[vertex_index].owner = owner
-                self.vertices[vertex_index].building = building
+                vertex.owner = owner
+                vertex.building = building
                 owner.numSettlements -= 1
                 return True
 
             elif building == Building.city:
-                self.vertices[vertex_index].owner = owner
-                self.vertices[vertex_index].building = building
+                vertex.owner = owner
+                vertex.building = building
                 owner.numCities -= 1
                 return True
 
@@ -226,16 +226,35 @@ class Board:
         return hand
 
 
-    def draw_development_card(self, player, card):
+    def draw_development_card(self, player):
+        """Draw a development card from the bank and give it to the given player"""
         if len(self.development_cards) > 0:
             player.development_cards.append(self.development_cards.pop())
         else:
             return None
-        
+
 
     def remove_resources(self, player, resources: list[Resource]):
+        """Remove the given resources from the player's hand. returns truthy value based on success"""
+        removed_resources = []
+        allowed = True
         for resource in resources:
+            if resource in player.resources:
+                removed_resources.append(player.resources.remove(resource))
+            else:
+                allowed = False
+        if allowed:
+            # TODO - Jeb
+            # add resources back to the bank
+            return True
+        else:
+            # add the resources back into the player's hand since this was not allowed
+            return False
             pass
+
+
+
+
 
 
     # check winning conditions
