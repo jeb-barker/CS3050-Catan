@@ -14,6 +14,7 @@ from pyglet.gl import (
 from board import Board
 from texture_enums import Resource
 from player import Player
+from button import Button
 
 
 class Renderer():
@@ -54,6 +55,9 @@ class Renderer():
         self.load_bank_sprites()
         self.load_player_info(self.window.width*.85, self.window.height*.40)
 
+        self.buttons = []
+        self.init_buttons()
+
 
     def update(self):
         """Function to update the screen"""
@@ -73,6 +77,7 @@ class Renderer():
         self.draw_bank_cards()
 
         self.draw_player_info()
+        self.draw_buttons()
 
 
     def draw_player_cards(self, player_id):
@@ -140,6 +145,11 @@ class Renderer():
                 self.player_info_sprites[(p_num * 14) + 10].text = str("-1")
                 self.player_info_sprites[(p_num * 14) + 13].text = str("-1")
             sprite.draw()
+
+    def draw_buttons(self):
+        """draw each button on the screen"""
+        for button in self.buttons:
+            button.draw()
 
 
     def load_images(self):
@@ -366,6 +376,12 @@ class Renderer():
 
         return label_background, label
 
+    def init_buttons(self):
+        """Initialize buttons. placeholder for now."""
+        self.buttons.append(Button(False, (self.window.width/2, 5), width=10, height=10, id="add_resource"))
+        self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, id="roll_dice"))
+
+
     def load_tiles_batch(self):
         """Create, position, and scale sprites for tiles and gen nums"""
         mountains_imgs = self.images[0:3]
@@ -465,3 +481,9 @@ class Renderer():
                     batch=self.gen_num_batch, x=x, y=y)
                 gen_num_sprite.scale = gen_num_scale
                 self.gen_num_sprites.append(gen_num_sprite)
+
+    def get_clickables(self):
+        """return list of clickable elements on the board"""
+        clickables = self.buttons
+        # TODO get all buttons from the renderer
+        return clickables

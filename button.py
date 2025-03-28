@@ -1,12 +1,14 @@
 """represents a button. 
 offers basic functionality for checking if points are within the bounds."""
 import math
+import pyglet
 
 class Button:
     """
     Class to represent a button with either a point-radius (circle) or a bounding box (rectangle)
     """
-    def __init__(self, is_circle: bool, center: tuple[int,int], radius=0, width=0, height=0):
+    def __init__(self, is_circle: bool, center: tuple[int,int], radius=0, width=0, height=0, id=-1):
+        self.id = id
         self.is_circle = is_circle
         self.center = center
         # if the button is a circle...
@@ -14,8 +16,9 @@ class Button:
             self.radius = radius
         else:
             # set bounding box based on width, height, and center
-            self.top_left = (center[0] - width/2, center[1] - height/2)
-            self.bottom_right = (center[0] + width/2, center[1] + height/2)
+            self.top_left = (center[0] - width/2, center[1] + height/2)
+            self.bottom_right = (center[0] + width/2, center[1] - height/2)
+            self.rect = pyglet.shapes.Rectangle(self.top_left[0], self.bottom_right[1], width, height, color=(255, 0, 0))
 
     def contains(self, point: tuple[int,int]) -> bool:
         """returns True if the given tuple is within the bounds of the button 
@@ -29,6 +32,9 @@ class Button:
             return distance < self.radius
 
         # return whether the point is within the bounding box
-        x_within = self.top_left[0] < x and self.bottom_right[0] < x
-        y_within = self.top_left[1] > y and self.bottom_right[1] < y
+        x_within = self.top_left[0] <= x and self.bottom_right[0] >= x
+        y_within = self.top_left[1] >= y and self.bottom_right[1] <= y
         return x_within and y_within
+    
+    def draw(self):
+        self.rect.draw()
