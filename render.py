@@ -67,6 +67,8 @@ class Renderer():
         # enable blending
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        # draw dice
+
         # draw tiles
         self.tiles_batch.draw()
         # draw gen nums
