@@ -29,7 +29,8 @@ class Renderer():
     TILE_SCALE = 0.075
     # ratio of card width to screen width
     CARD_SCALE = 0.06
-
+    # ratio of dice width to screen width
+    DICE_SCALE = 0.05
 
     def __init__(self, window, board=None):
         self.window = window
@@ -286,6 +287,23 @@ class Renderer():
             sprite = pyglet.sprite.Sprite(resource_imgs[i], x=x, y=y)
             sprite.scale = scale
             self.bank_sprites.append(sprite)
+
+
+    def load_dice_sprites(self):
+        dice_imgs = self.images[47:53]
+
+        image_width = dice_imgs[0].width
+
+        dice_width = self.DICE_SCALE * self.window.width / 2
+
+        scale = dice_width / image_width
+
+        self.dice_sprites = []
+        for i in range(6):
+            sprite = pyglet.sprite.Sprite(dice_imgs[i])
+            sprite.scale = scale
+            self.dice_sprites.append(sprite)
+
 
     def load_player_info(self, x, y):
         """Load/position images used to display every player's data on the side of the screen.
