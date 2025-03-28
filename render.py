@@ -34,6 +34,8 @@ class Renderer():
         self.window = window
         # test player is TEMPORARY
         test_player = Player(0, "red") # color will likely be an enum later
+        test_player2 = Player(1, "blue") # color will likely be an enum later
+        test_player3 = Player(2, "black") # color will likely be an enum later
         test_player.resources = [Resource.ore, Resource.sheep, Resource.wheat,
                                  Resource.brick, Resource.wood]
 
@@ -41,6 +43,8 @@ class Renderer():
             self.board = Board()
 
         self.board.players.append(test_player)
+        self.board.players.append(test_player2)
+        self.board.players.append(test_player3)
 
         self.load_images()
         self.tiles_batch = pyglet.graphics.Batch()
@@ -48,6 +52,7 @@ class Renderer():
         self.load_tiles_batch()
         self.load_card_sprites()
         self.load_bank_sprites()
+        self.load_player_info(self.window.width*.85, self.window.height*.40)
 
 
     def update(self):
@@ -68,6 +73,8 @@ class Renderer():
         labels = self.draw_bank_cards()
         for label in labels:
             label.draw()
+        
+        self.draw_player_info()
 
 
     def draw_player_cards(self, player_id):
@@ -116,7 +123,10 @@ class Renderer():
             labels.append(label)
         return labels
 
-
+    def draw_player_info(self):
+        """Draw each sprite in the player_info_sprites"""
+        for sprite in self.player_info_sprites:
+            sprite.draw()
 
 
     def load_images(self):
@@ -156,6 +166,7 @@ class Renderer():
             "assets/sheep.png",
             "assets/brick.png",
             "assets/wood.png",
+            "assets/knight.png"
         ]
         image_count = len(self.image_names)
         self.images = [None for _ in range(image_count)]
@@ -232,6 +243,101 @@ class Renderer():
             sprite = pyglet.sprite.Sprite(resource_imgs[i-1], x=x, y=y)
             sprite.scale = scale
             self.bank_sprites.append(sprite)
+
+    def load_player_info(self, x, y):
+        """Load/position images used to display every player's data on the side of the screen.
+           x, y are the top-left coordinates where the data should be displayed on screen."""
+        imgs = self.images[34]
+        card_width = (self.CARD_SCALE * self.window.width / 2) / 2 # looks more natural
+        image_width = imgs.width
+        scale = card_width / image_width
+        padding = card_width / 30
+
+        y_offset = (self.window.height * self.CARD_SCALE * 1.5) + padding
+
+        self.player_info_sprites = []
+
+        for p_num, player in enumerate(self.board.players):
+            # display player color, VPs, #cards, #dev cards, #knights played, longest road
+            y_pos = y - ((p_num)*y_offset)
+            # TODO (Jeb): define some colors for use here.
+            player_sprite = pyglet.shapes.Rectangle(x, y - (p_num)*(y_offset) + card_width, card_width, card_width, color=(255, 0, 0))
+            self.player_info_sprites.append(player_sprite)
+
+            # display vp total inside the player's color box
+            vp_label = pyglet.text.Label(str(player.vps),
+                    font_name='Times New Roman',
+                    font_size=25,
+                    x=player_sprite.x + (player_sprite.width / 2), y=player_sprite.y + (player_sprite.height / 2),
+                    anchor_x='center', anchor_y='center')
+            self.player_info_sprites.append(vp_label)
+
+            # position the graphic that shows the card icon
+            x_pos = x + card_width + padding*3 # add extra padding
+            # TODO - Jeb: use a different image
+            card_sprite = pyglet.sprite.Sprite(imgs, x=x_pos, y=y_pos)
+            card_sprite.scale = scale*2
+            self.player_info_sprites.append(card_sprite)
+            label_background, label = self.label_from_sprite(card_sprite, str(len(player.resources)))
+
+            self.player_info_sprites.append(label_background)
+            self.player_info_sprites.append(label)
+
+            # position the graphic that shows the dev card count
+            x_pos = x + (card_width*3) + padding*6
+            # TODO - Jeb: use a different image
+            dev_card_sprite = pyglet.sprite.Sprite(imgs, x=x_pos, y=y_pos)
+            dev_card_sprite.scale = scale*2
+            self.player_info_sprites.append(dev_card_sprite)
+
+            label_background, label = self.label_from_sprite(dev_card_sprite, str(len(player.dev_cards)))
+
+            self.player_info_sprites.append(label_background)
+            self.player_info_sprites.append(label)
+
+            # position the graphic that shows the knight count
+            x_pos = x + (card_width*5) + padding*9
+            
+            # TODO - Jeb: use a different image
+            knight_sprite = pyglet.sprite.Sprite(imgs, x=x_pos, y=y_pos)
+            knight_sprite.scale = scale*2
+            self.player_info_sprites.append(knight_sprite)
+
+            # TODO: get the number of knight cards from each player
+            label_background, label = self.label_from_sprite(knight_sprite, str(len(player.dev_cards)))
+
+            self.player_info_sprites.append(label_background)
+            self.player_info_sprites.append(label)
+
+            # position the graphic that shows the longest road count
+            x_pos = x + (card_width*7) + padding*12
+            
+            # TODO - Jeb: use a different image
+            road_sprite = pyglet.sprite.Sprite(imgs, x=x_pos, y=y_pos)
+            road_sprite.scale = scale*2
+            self.player_info_sprites.append(road_sprite)
+
+            # TODO: get the longest road for each player
+            label_background, label = self.label_from_sprite(road_sprite, str(len(player.dev_cards)))
+
+            self.player_info_sprites.append(label_background)
+            self.player_info_sprites.append(label)
+
+    def label_from_sprite(self, sprite, text):
+        """returns a background box and label in the upper right corner of the given sprite"""
+        width = sprite.width
+        height = sprite.height
+        x_pos = sprite.x
+        y_pos = sprite.y
+        label = pyglet.text.Label(text,
+                font_name='Times New Roman',
+                font_size=25,
+                color=(255,255,255),
+                x=x_pos+(width*.75), y=y_pos+(height*.85),
+                anchor_x='center', anchor_y='center')
+        label_background = pyglet.shapes.Rectangle(x_pos+(width*.5), y_pos+(height*.7), width*.5, height*.3, color=(0, 0, 0))
+
+        return label_background, label
 
     def load_tiles_batch(self):
         """Create, position, and scale sprites for tiles and gen nums"""
