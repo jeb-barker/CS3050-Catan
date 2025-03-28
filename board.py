@@ -131,9 +131,9 @@ class Board:
                     owner.numRoads -= 1
                     return True
 
-    # place building at the given vertex_index
-    # returns False if there's an error or the placement is invalid otherwise, returns True
     def place_building(self, building, owner, vertex_index):
+        """place building at the given vertex_index
+           returns False if there's an error or the placement is invalid otherwise, returns True"""
         # Check that player has settlements left in pool
         if building == Building.city:
             if owner.numCities == 0:
@@ -164,8 +164,8 @@ class Board:
             return False
         
         
-    # Is the given vertex_index a valid place for a settlement
     def is_valid_settle_spot(self, vertex_index):
+        """Is the given vertex_index a valid place for a settlement"""
         vertex = self.vertices[vertex_index]
         # check if city or settlement is there already:
         if vertex.building != Building.none:
@@ -210,14 +210,15 @@ class Board:
 
     # trading
 
-    # adding/removing cards from hand -> maybe move to Player class
     def add_resources(self, player, resources: list[Resource]):
+        """adding/removing cards from hand -> maybe move to Player class"""
         drawn_cards = self.draw_resources(resources)
         for card in drawn_cards:
             player.resources.append(card)
 
 
     def draw_resources(self, resources: list[Resource]) -> list[Card]:
+        """Draw resources from the bank and return a list of returned resources"""
         hand = []
         for resource in resources:
             if len(self.resource_bank[resource.value]) > 0:
