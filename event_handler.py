@@ -10,8 +10,6 @@ def on_click(x, y, renderer):
                 case "add_resource":
                     renderer.board.add_resources(renderer.board.players[0], [Resource(4)])
                 case "roll_dice":
-                    # add the appropriate logic if needed
                     pass
                 case "end_turn":
-                    # Logic for ending the turn
-                    pass
+                    renderer.game_state.end_turn()
