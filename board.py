@@ -26,6 +26,7 @@ class Board:
         self.development_cards = []
 
         self.beginner_setup()
+        self.die_roll = (0, 0)
 
     def beginner_setup(self):
         """ Add 19 tiles to self.tiles
@@ -194,6 +195,7 @@ class Board:
         die1 = random.randint(1,6)
         die2 = random.randint(1,6)
         roll = die1 + die2
+        self.die_roll = (die1, die2)
 
         # Determine resources to distribute
         newResources = []

@@ -80,6 +80,8 @@ class Renderer():
         self.draw_buttons()
 
 
+
+
     def draw_player_cards(self, player_id):
         """Draw resource, development, and victory point cards in a player's hand""" 
         resources = self.board.players[player_id].resources
@@ -200,6 +202,14 @@ class Renderer():
             "assets/palace.png",
             "assets/palace.png", # longest_road place holder
             "assets/palace.png", # largest army place holder
+            "assets/palace.png", # place holder for resource card back
+            "assets/palace.png", # Dev card back place holder
+            "assets/dice1.png", # 47
+            "assets/dice2.png",
+            "assets/dice3.png",
+            "assets/dice4.png",
+            "assets/dice5.png",
+            "assets/dice6.png"
         ]
         image_count = len(self.image_names)
         self.images = [None for _ in range(image_count)]
