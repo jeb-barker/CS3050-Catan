@@ -106,26 +106,31 @@ class Renderer():
         labels = []
         for i in range(5):
             label = pyglet.text.Label()
-            if resource_counts[i] > 0:
-                # TODO maybe add x scaling to fill from left, rather than have fixed places
-                self.bank_sprites[i].draw()
-                # TODO draw number over card representing resource_counts[i]
-                x = self.bank_sprites[i].x
-                y = self.bank_sprites[i].y
-                width = self.bank_sprites[i].width
-                height = self.bank_sprites[i].height
-                label = pyglet.text.Label(str(resource_counts[i]),
-                          font_name='Times New Roman',
-                          font_size=25,
-        #                  weight=5,
-                          x=x+(width*.75), y=y+(height*.85),
-                          anchor_x='center', anchor_y='center')
+            # TODO maybe add x scaling to fill from left, rather than have fixed places
+            self.bank_sprites[i].draw()
+            # TODO draw number over card representing resource_counts[i]
+            x = self.bank_sprites[i].x
+            y = self.bank_sprites[i].y
+            width = self.bank_sprites[i].width
+            height = self.bank_sprites[i].height
+            label = pyglet.text.Label(str(resource_counts[i]),
+                        font_name='Times New Roman',
+                        font_size=25,
+    #                  weight=5,
+                        x=x+(width*.75), y=y+(height*.85),
+                        anchor_x='center', anchor_y='center')
             labels.append(label)
         return labels
 
     def draw_player_info(self):
         """Draw each sprite in the player_info_sprites"""
         for sprite in self.player_info_sprites:
+            for p_num, player in enumerate(self.board.players):
+                self.player_info_sprites[(p_num * 14) + 1].text = str(player.vps)
+                self.player_info_sprites[(p_num * 14) + 4].text = str(len(player.resources))
+                self.player_info_sprites[(p_num * 14) + 7].text = str(len(player.dev_cards))
+                self.player_info_sprites[(p_num * 14) + 10].text = str("-1")
+                self.player_info_sprites[(p_num * 14) + 13].text = str("-1")
             sprite.draw()
 
 
