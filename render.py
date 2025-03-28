@@ -73,7 +73,7 @@ class Renderer():
         labels = self.draw_bank_cards()
         for label in labels:
             label.draw()
-        
+
         self.draw_player_info()
 
 
@@ -261,7 +261,7 @@ class Renderer():
             # display player color, VPs, #cards, #dev cards, #knights played, longest road
             y_pos = y - ((p_num)*y_offset)
             # TODO (Jeb): define some colors for use here.
-            player_sprite = pyglet.shapes.Rectangle(x, y - (p_num)*(y_offset) + card_width, card_width, card_width, color=(255, 0, 0))
+            player_sprite = pyglet.shapes.Rectangle(x, y_pos + card_width, card_width, card_width, color=(255, 0, 0))
             self.player_info_sprites.append(player_sprite)
 
             # display vp total inside the player's color box
@@ -297,7 +297,7 @@ class Renderer():
 
             # position the graphic that shows the knight count
             x_pos = x + (card_width*5) + padding*9
-            
+
             # TODO - Jeb: use a different image
             knight_sprite = pyglet.sprite.Sprite(imgs, x=x_pos, y=y_pos)
             knight_sprite.scale = scale*2
@@ -311,7 +311,7 @@ class Renderer():
 
             # position the graphic that shows the longest road count
             x_pos = x + (card_width*7) + padding*12
-            
+
             # TODO - Jeb: use a different image
             road_sprite = pyglet.sprite.Sprite(imgs, x=x_pos, y=y_pos)
             road_sprite.scale = scale*2
@@ -335,7 +335,11 @@ class Renderer():
                 color=(255,255,255),
                 x=x_pos+(width*.75), y=y_pos+(height*.85),
                 anchor_x='center', anchor_y='center')
-        label_background = pyglet.shapes.Rectangle(x_pos+(width*.5), y_pos+(height*.7), width*.5, height*.3, color=(0, 0, 0))
+        l_x = x_pos+(width*.5)
+        l_y = y_pos+(height*.7)
+        l_w = width * .5
+        l_h = height * .3
+        label_background = pyglet.shapes.Rectangle(l_x, l_y, l_w, l_h, color=(0, 0, 0))
 
         return label_background, label
 
@@ -438,4 +442,3 @@ class Renderer():
                     batch=self.gen_num_batch, x=x, y=y)
                 gen_num_sprite.scale = gen_num_scale
                 self.gen_num_sprites.append(gen_num_sprite)
-

@@ -22,7 +22,7 @@ class Board:
         self.tiles = []
         self.vertices = []
         self.roads = []
-        self.resource_bank = {} # maps resource enum values (i.e. Resource.wheat) to a list of cards 
+        self.resource_bank = {} # maps resource enum values (i.e. Resource.wheat) to a list of cards
         self.development_cards = []
 
         self.beginner_setup()
