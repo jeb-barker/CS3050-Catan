@@ -80,6 +80,8 @@ class Renderer():
         self.draw_buttons()
 
 
+
+
     def draw_player_cards(self, player_id):
         """Draw resource, development, and victory point cards in a player's hand""" 
         resources = self.board.players[player_id].resources
