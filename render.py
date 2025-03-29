@@ -358,7 +358,7 @@ class Renderer():
     def init_buttons(self):
         """Initialize buttons. placeholder for now."""
         self.buttons.append(Button(False, (self.window.width/2, 5), width=10, height=10, id="add_resource"))
-
+        self.buttons.append(Button(True, (self.window.width / 2, 100), width=150, height=50, id="end_turn"))
 
     def load_tiles_batch(self):
         """Create, position, and scale sprites for tiles and gen nums"""
