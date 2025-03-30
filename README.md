@@ -4,7 +4,7 @@
 When running main.py, a screen with the default catan board setup will appear in the middle of the screen. If your screen is too small, this may result in parts of the game overflowing off of your screen currently (WIP).
 
 ## Initial Setup
-Three players are currently added to the game, with the red player's hand being displayed on the bottom left of the screen. The red player starts with one of each resource.
+Three players are currently added to the game, with the red player's hand being displayed on the bottom left of the screen. The red player starts with no resources, but after pressing the dice roll button, resources will start to show up.
 
 ## The Bank
 The bank is shown on the right side of the screen, and shows the number of each resource currently available in the bank. Note that during the course of a game, the bank can run out of resources and will simply not give any more out to the players until they are returned.
