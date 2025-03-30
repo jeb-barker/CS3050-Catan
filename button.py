@@ -37,4 +37,7 @@ class Button:
         return x_within and y_within
     
     def draw(self):
-        self.rect.draw()
+        if not self.is_circle:
+            self.rect.draw()
+        else:
+            pass

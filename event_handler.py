@@ -2,7 +2,7 @@
 
 from texture_enums import Resource
 
-def on_click(x, y, renderer):
+def on_click(x, y, renderer, game_state):
     """Handle click events from the window."""
     for clickable in renderer.get_clickables():
         if clickable.contains((x,y)):
@@ -12,4 +12,4 @@ def on_click(x, y, renderer):
                 case "roll_dice":
                     pass
                 case "end_turn":
-                    renderer.game_state.end_turn()
+                    game_state.end_turn()
