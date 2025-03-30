@@ -7,9 +7,9 @@ The bank is shown on the right side of the screen, and shows the number of each 
 
 Below the bank, a player information section is shown. For each player, their colored box contains the number of victory points they currently have (this defaults to 0 since no settlements have been played). In order to right, the numbers above the placeholder cards (WIP) represent the number of cards the player has, the number of development cards the player has, the number of knights the player has already played (-1 as of right now), and the length of that player's longest road (-1 as of right now).
 
-In the top right of the screen, a red button can be pressed (as many times as you wish), and will roll the dice. Based on the outcome of the dice roll, certain resource tiles will generate their resources and give their resources to each player (WIP: This is temporary, and will become more complex once players are able to place buildings)
+In the top right of the screen, a red button can be pressed (as many times as you wish), and will roll the dice. Based on the outcome of the dice roll shown, resource tiles showing the sum of the dice will generate their resources (i.e. brick, ore, etc.) and give their resources to each player (WIP: in the final game, resources are only generated when a settlement/city is present on its border)
 
-There is also a very small button in the bottom-middle of the screen that will give the red player (current player 1) a Wood resource from the bank. This is a temporary button used for administration and testing purposes.
+There is also a very small button in the bottom-middle of the screen that will give the red player (current player 1) a Wood resource from the bank. This is a temporary button used for admin and testing purposes.
 
 Note: this project requires the pyglet package to run.
 

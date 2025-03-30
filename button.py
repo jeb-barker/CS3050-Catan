@@ -19,6 +19,8 @@ class Button:
             self.top_left = (center[0] - width/2, center[1] + height/2)
             self.bottom_right = (center[0] + width/2, center[1] - height/2)
             self.rect = pyglet.shapes.Rectangle(self.top_left[0], self.bottom_right[1], width, height, color=(255, 0, 0))
+            self.width = width
+            self.height = height
 
     def contains(self, point: tuple[int,int]) -> bool:
         """returns True if the given tuple is within the bounds of the button 

@@ -27,7 +27,7 @@ class Board:
         self.development_cards = []
 
         self.beginner_setup()
-        self.die_roll = (0, 0)
+        self.die_roll = (1, 1)
 
     def beginner_setup(self):
         """ Add 19 tiles to self.tiles
@@ -208,8 +208,6 @@ class Board:
         # Distribute resources
         for player in self.players:
             self.add_resources(player, newResources)
-
-
 
     # trading
 

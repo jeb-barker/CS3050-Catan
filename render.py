@@ -59,6 +59,9 @@ class Renderer():
         self.buttons = []
         self.init_buttons()
 
+        self.dice_sprites = []
+        self.load_dice_sprites()
+
 
     def update(self):
         """Function to update the screen"""
@@ -79,6 +82,7 @@ class Renderer():
 
         self.draw_player_info()
         self.draw_buttons()
+        self.draw_dice()
 
 
 
@@ -153,6 +157,14 @@ class Renderer():
         """draw each button on the screen"""
         for button in self.buttons:
             button.draw()
+
+    def draw_dice(self):
+        """draw the current value of the dice roll on screen"""
+        roll = self.board.die_roll
+        index_1 = (roll[0]-1)*2
+        index_2 = (roll[1]-1)*2 + 1
+        self.dice_sprites[index_1].draw()
+        self.dice_sprites[index_2].draw()
 
 
     def load_images(self):
@@ -290,6 +302,7 @@ class Renderer():
 
 
     def load_dice_sprites(self):
+        """Load dice images"""
         dice_imgs = self.images[47:53]
 
         image_width = dice_imgs[0].width
@@ -298,11 +311,25 @@ class Renderer():
 
         scale = dice_width / image_width
 
+        width = self.buttons[1].width
+        x_1 = self.buttons[1].top_left[0]
+        y_1 = self.buttons[1].bottom_right[1]
+
+        # TODO - make this dynamically sized
+        x_2 = self.buttons[1].top_left[0] + (width / 2)
+        y_2 = self.buttons[1].bottom_right[1]
+
+
         self.dice_sprites = []
         for i in range(6):
-            sprite = pyglet.sprite.Sprite(dice_imgs[i])
+            sprite = pyglet.sprite.Sprite(dice_imgs[i], x=x_1, y=y_1)
             sprite.scale = scale
             self.dice_sprites.append(sprite)
+
+            # same sprite but positioned to the right.
+            sprite_2 = pyglet.sprite.Sprite(dice_imgs[i], x=x_2, y=y_2)
+            sprite_2.scale = scale
+            self.dice_sprites.append(sprite_2)
 
 
     def load_player_info(self, x, y):
