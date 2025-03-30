@@ -69,7 +69,7 @@ class Board:
         # Vertices left to right, top to bottom
         for i in range(19):
             self.tiles.append(Tile(coords=tile_coords[i], gen_num=tile_gen_nums[i], resource=tile_resources[i]))
-        
+
         # Set up the resource bank
         for resource in [Resource.brick, Resource.ore, Resource.sheep, Resource.wheat, Resource.wood]:
             # Add 19 of each resource type to the board's bank
@@ -81,7 +81,7 @@ class Board:
         for tile in self.tiles:
             if tile.coords == coords:
                 return tile
-    
+
 
     # Place a road, checking if it connects to an existing road, city or settlement
     # owned by that player, that they have roads left and there isn't already
@@ -116,7 +116,7 @@ class Board:
                     break
 
         # Abort or allow to proceed based on allowed value
-        if allowed == False:
+        if allowed is False:
             return False
 
         # Check if road exists between two vertices already
@@ -164,8 +164,8 @@ class Board:
                 return False
         else:
             return False
-        
-        
+
+
     def is_valid_settle_spot(self, vertex_index):
         """Is the given vertex_index a valid place for a settlement"""
         vertex = self.vertices[vertex_index]
@@ -177,10 +177,11 @@ class Board:
             if self.vertices[neighbor_vertex_index].building != Building.none:
                 return False
         return True
-    
+
     # Is the given edge a valid place for a player to place a road
     # Is the given vertex_index a valid place for a settlement
     def is_valid_road_spot(self, vertex_index):
+        """TODO: Check if the given vertex is a valid spot for a road. Possibly Duplicate."""
         pass
 
     # start turn: roll die/distribute resources
@@ -199,15 +200,15 @@ class Board:
         self.die_roll = (die1, die2)
 
         # Determine resources to distribute
-        newResources = []
+        new_resources = []
 
         for tile in self.tiles:
             if tile.gen_num == roll:
-                newResources.append(tile.resource)
+                new_resources.append(tile.resource)
 
         # Distribute resources
         for player in self.players:
-            self.add_resources(player, newResources)
+            self.add_resources(player, new_resources)
 
     # trading
 
@@ -251,14 +252,5 @@ class Board:
         else:
             # add the resources back into the player's hand since this was not allowed
             return False
-            pass
-
-
-
-
-
 
     # check winning conditions
-
-
-
