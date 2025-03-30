@@ -12,7 +12,7 @@ from pyglet.gl import (
 )
 
 from board import Board
-from texture_enums import Resource
+from texture_enums import Resource, Color
 from player import Player
 from button import Button
 
@@ -35,9 +35,9 @@ class Renderer():
     def __init__(self, window, board=None):
         self.window = window
         # test player is TEMPORARY
-        test_player = Player(0, "red") # color will likely be an enum later
-        test_player2 = Player(1, "blue") # color will likely be an enum later
-        test_player3 = Player(2, "black") # color will likely be an enum later
+        test_player = Player(0, Color.red) 
+        test_player2 = Player(1, Color.blue) 
+        test_player3 = Player(2, Color.black) 
         test_player.resources = [Resource.ore, Resource.sheep, Resource.wheat,
                                  Resource.brick, Resource.wood]
 
@@ -321,8 +321,7 @@ class Renderer():
         for p_num, player in enumerate(self.board.players):
             # display player color, VPs, #cards, #dev cards, #knights played, longest road
             y_pos = y - ((p_num)*y_offset)
-            # TODO (Jeb): define some colors for use here.
-            player_sprite = pyglet.shapes.Rectangle(x, y_pos + card_width, card_width, card_width, color=(255, 0, 0))
+            player_sprite = pyglet.shapes.Rectangle(x, y_pos + card_width, card_width, card_width, color=player.color.value)
             self.player_info_sprites.append(player_sprite)
 
             # display vp total inside the player's color box
