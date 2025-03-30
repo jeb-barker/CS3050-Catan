@@ -1,3 +1,4 @@
+"""Enums used throughout the project"""
 from enum import Enum
 
 # Values are placeholder for now, they should eventually be a reference to card textures.

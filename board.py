@@ -1,5 +1,6 @@
 '''
-
+Class that represents the board in the Catan game
+Handles game logic
 '''
 import random
 from tile import Tile

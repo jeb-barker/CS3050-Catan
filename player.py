@@ -1,3 +1,4 @@
+"""Class that represents a player in the Catan game"""
 import copy
 
 from texture_enums import Resource
