@@ -254,3 +254,50 @@ class Board:
             return False
 
     # check winning conditions
+
+    def calculate_player_longest_road(self, player) -> int:
+        """Returns the length of the given player's longest road."""
+        player_roads = [road if road.owner == player else None for road in self.roads]
+        road_graph = {}
+        for road in player_roads:
+            # ensure vertices are in the graph
+            if road.vertex1 not in road_graph.keys():
+                road_graph[road.vertex1] = []
+            if road.vertex2 not in road_graph.keys():
+                road_graph[road.vertex2] = []
+            # add two edges to make the graph undirected
+            road_graph[road.vertex1].append(road.vertex2)
+            road_graph[road.vertex2].append(road.vertex1)
+
+        # road_graph is now an adjacency list
+        # connecting vertices that have the given player's roads between them.
+        # We can perform a search (essentially) on this graph to get the longest path, 
+        # and return the length of the longest one.
+        def graph_search(graph,curr,visited) -> int:
+            # only on the first iteration
+            if visited is None: 
+                visited = []
+
+            visited.append(curr)
+
+            path_lengths = [0]
+            # check if a different player's settlement is built on this vertex.
+            if self.vertices[curr].owner in [player, None]:
+                # if it is, then don't traverse and return the length as 0
+                return 0
+
+            for neighbor in graph[curr]:
+                # check if we've visited the neighbor
+                if neighbor not in visited:
+                    # add one to represent traversing the graph
+                    path_lengths.append(1 + graph_search(graph, neighbor, visited[:]))
+            return max(path_lengths)
+
+        road_lengths = [0]
+        for vertice in road_graph.keys():
+            # for each vertice in the road graph...
+            # graph search returns the length of the segment that the given vertice is on
+            road_lengths.append(graph_search(road_graph, vertice, None))
+
+        # return the maximum road segment length found
+        return max(road_lengths)

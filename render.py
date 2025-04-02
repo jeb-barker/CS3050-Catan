@@ -150,7 +150,7 @@ class Renderer():
                 self.player_info_sprites[(p_num * 14) + 4].text = str(len(player.resources))
                 self.player_info_sprites[(p_num * 14) + 7].text = str(len(player.dev_cards))
                 self.player_info_sprites[(p_num * 14) + 10].text = str("-1")
-                self.player_info_sprites[(p_num * 14) + 13].text = str("-1")
+                self.player_info_sprites[(p_num * 14) + 13].text = str(self.board.calculate_player_longest_road(player))
             sprite.draw()
 
     def draw_buttons(self):
