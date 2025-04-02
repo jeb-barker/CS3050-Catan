@@ -7,20 +7,28 @@ class Button:
     """
     Class to represent a button with either a point-radius (circle) or a bounding box (rectangle)
     """
-    def __init__(self, is_circle: bool, center: tuple[int,int], radius=0, width=0, height=0, button_name=-1):
+    def __init__(self, is_circle: bool, center: tuple[int,int], button_sprite=None, radius=0, width=0, height=0, button_name=-1):
         self.button_name = button_name
         self.is_circle = is_circle
         self.center = center
         # if the button is a circle...
         if is_circle:
             self.radius = radius
+            if button_sprite is None:
+                self.button_sprite = pyglet.shapes.Circle(self.center[0], self.center[1], self.radius, color=(255, 0, 0))
+            else:
+                self.button_sprite = button_sprite
         else:
             # set bounding box based on width, height, and center
             self.top_left = (center[0] - width/2, center[1] + height/2)
             self.bottom_right = (center[0] + width/2, center[1] - height/2)
-            self.rect = pyglet.shapes.Rectangle(self.top_left[0], self.bottom_right[1], width, height, color=(255, 0, 0))
             self.width = width
             self.height = height
+
+            if button_sprite is None:
+                self.button_sprite = pyglet.shapes.Rectangle(self.top_left[0], self.bottom_right[1], width, height, color=(255, 0, 0))
+            else:
+                self.button_sprite = button_sprite
 
     def contains(self, point: tuple[int,int]) -> bool:
         """returns True if the given tuple is within the bounds of the button 
@@ -40,4 +48,4 @@ class Button:
 
     def draw(self):
         """Draw the internal rectangle"""
-        self.rect.draw()
+        self.button_sprite.draw()
