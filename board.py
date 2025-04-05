@@ -5,7 +5,7 @@ Handles game logic
 import random
 from tile import Tile
 from texture_enums import Resource, Card
-from board_config import VERTEX_ADJACENCY, Building
+from board_config import VERTEX_ADJACENCY, TILE_ADJACENCY, Building
 from road import Road
 
 
@@ -200,15 +200,26 @@ class Board:
         self.die_roll = (die1, die2)
 
         # Determine resources to distribute
-        new_resources = []
+        new_resource_tiles = []
 
-        for tile in self.tiles:
-            if tile.gen_num == roll:
-                new_resources.append(tile.resource)
+        for i in range(len(self.tiles)):
+            # First: Check if tile's gen num matches most recent roll
+            if self.tiles[i].gen_num == roll:
+                # new_resource_tiles.append(tile)
+                for vertex in TILE_ADJACENCY[i]:
+                    if vertex.building != Building.none:
+                        self.add_resources(vertex.owner, self.tiles[i].resource)
 
         # Distribute resources
+        # Iterate through tiles in new_resource_tiles
+
+
+        '''
         for player in self.players:
+            # Next check if player has a building on an adjacent vertex
+            
             self.add_resources(player, new_resources)
+            '''
 
     # trading
 
