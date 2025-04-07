@@ -11,6 +11,9 @@ class GameState:
         self.players = players
         self.current_player_index = 0
         self.state = TurnState.BEFORE_ROLL
+        self.tags = {'city': False,
+                     'settlement': False,
+                     'road': False}
 
     def get_current_player(self):
         """Returns the player whose turn it is."""
@@ -41,6 +44,12 @@ class GameState:
         """Cycle to the next player's turn."""
         self.current_player_index = (self.current_player_index + 1) % len(self.players)
         self.state = TurnState.BEFORE_ROLL
+
+    def is_build_allowed(self):
+        """returns truthy if current player can build a settlement right now"""
+        if self.state is TurnState.BUILDING and self.tags['settlement'] == True:
+            return True
+        return False
 
     def get_ui_state(self):
         """Returns which buttons should be active."""

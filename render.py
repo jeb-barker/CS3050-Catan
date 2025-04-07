@@ -10,8 +10,10 @@ from pyglet.gl import (
     glClearColor, glClear, glEnable, glBlendFunc,
     GL_BLEND, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_COLOR_BUFFER_BIT
 )
+import math
 
 from board import Board
+from board_config import TILE_ADJACENCY
 from texture_enums import Resource, Color
 from player import Player
 from button import Button
@@ -57,6 +59,7 @@ class Renderer():
         self.load_player_info(self.window.width*.85, self.window.height*.40)
 
         self.buttons = []
+        self.vertex_buttons = {index:None for index in range(54)}
         self.init_buttons()
 
         self.dice_sprites = []
@@ -150,13 +153,16 @@ class Renderer():
                 self.player_info_sprites[(p_num * 14) + 4].text = str(len(player.resources))
                 self.player_info_sprites[(p_num * 14) + 7].text = str(len(player.dev_cards))
                 self.player_info_sprites[(p_num * 14) + 10].text = str("-1")
-                self.player_info_sprites[(p_num * 14) + 13].text = str("-1")
+                self.player_info_sprites[(p_num * 14) + 13].text = str(self.board.calculate_player_longest_road(player))
             sprite.draw()
 
     def draw_buttons(self):
         """draw each button on the screen"""
         for button in self.buttons:
             button.draw()
+        for button in self.vertex_buttons:
+            if self.vertex_buttons[button] is not None:
+                self.vertex_buttons[button].draw()
 
     def draw_dice(self):
         """draw the current value of the dice roll on screen"""
@@ -435,6 +441,23 @@ class Renderer():
         self.buttons.append(Button(False, (self.window.width/2, 5), width=10, height=10, button_name="add_resource"))
         self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, button_name="roll_dice"))
 
+        # initialize vertex buttons:
+        for index, tile_sprite in enumerate(self.tile_sprites):
+            tile_width = tile_sprite.width * 1.05 # positions the vertices in a more suitable manner
+            tile_height = tile_sprite.height
+
+            x_center = tile_sprite.x + (tile_width/2)
+            y_center = tile_sprite.y + (tile_height/2)
+
+            for i in range(6):
+                x_pos = x_center + (tile_width/2) * math.cos((i * math.pi / 3) - math.pi/2)
+                y_pos = y_center + (tile_height/2) * math.sin((i * math.pi / 3) - math.pi/2)
+
+                vertex_index = TILE_ADJACENCY[index][i]
+                if self.vertex_buttons[vertex_index] is None:
+                    sprite = pyglet.shapes.Circle(x_pos,y_pos, 20, color=(0,0,int(255/(i+1))))
+                    self.vertex_buttons[vertex_index] = Button(True, (x_pos, y_pos), radius=20, button_name="vertex", button_sprite=sprite)
+
 
     def load_tiles_batch(self):
         """Create, position, and scale sprites for tiles and gen nums"""
@@ -541,3 +564,7 @@ class Renderer():
         clickables = self.buttons
         # TODO get all buttons from the renderer
         return clickables
+    
+    def get_vertex_buttons(self):
+        """returns the dictionary containing the vertex buttons"""
+        return self.vertex_buttons
