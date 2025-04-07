@@ -7,6 +7,7 @@ from tile import Tile
 from texture_enums import Resource, Card
 from board_config import VERTEX_ADJACENCY, Building
 from road import Road
+from game_state import GameState
 
 
 class Board:
@@ -25,6 +26,7 @@ class Board:
         self.roads = []
         self.resource_bank = {} # maps resource enum values (i.e. Resource.wheat) to a list of cards
         self.development_cards = []
+        self.game_state = GameState(self.players)
 
         self.beginner_setup()
         self.die_roll = (1, 1)
