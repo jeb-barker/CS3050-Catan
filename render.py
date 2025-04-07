@@ -564,3 +564,7 @@ class Renderer():
         clickables = self.buttons
         # TODO get all buttons from the renderer
         return clickables
+    
+    def get_vertex_buttons(self):
+        """returns the dictionary containing the vertex buttons"""
+        return self.vertex_buttons
