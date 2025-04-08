@@ -39,6 +39,11 @@ class Player:
             return True
         return False
 
+    def play_knight(self):
+        """Play a knight card if available, increment counter"""
+        for card in self.dev_cards:
+
+
     def count_played_knights(self):
         """Returns the number of knight cards the player has played"""
         return self.numKnights
