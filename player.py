@@ -38,3 +38,7 @@ class Player:
             self.resources.remove(resource)
             return True
         return False
+
+    def count_played_knights(self):
+        """Returns the number of knight cards the player has played"""
+        return self.numKnights
