@@ -19,6 +19,7 @@ class Player:
         self.numRoads = 15
         self.numCities = 4
         self.numSettlements = 5
+        self.numKnights = 0
 
     def has_resources(self, resources: list[Resource]):
         """Returns true if the player has the resources in the quantities supplied"""
@@ -38,3 +39,16 @@ class Player:
             self.resources.remove(resource)
             return True
         return False
+
+    def play_knight(self):
+        """Play a knight card if available, increment counter"""
+        for card in self.dev_cards:
+            self.dev_cards.remove(card)
+            self.numKnights += 1
+            return True
+        return False  # No knight card to play
+
+
+    def count_played_knights(self):
+        """Returns the number of knight cards the player has played"""
+        return self.numKnights
