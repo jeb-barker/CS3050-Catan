@@ -440,6 +440,8 @@ class Renderer():
         """Initialize buttons. placeholder for now."""
         self.buttons.append(Button(False, (self.window.width/2, 5), width=10, height=10, button_name="add_resource"))
         self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, button_name="roll_dice"))
+        self.buttons.append(Button(False, (self.window.width/2, self.window.height/8), width=50, height=50, button_name="build_settlement"))
+        self.buttons.append(Button(False, (self.window.width/2 + 60, self.window.height/8), width=50, height=50, button_name="build_city"))
 
         # initialize vertex buttons:
         for index, tile_sprite in enumerate(self.tile_sprites):

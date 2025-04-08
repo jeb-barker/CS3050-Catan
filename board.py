@@ -8,6 +8,7 @@ from texture_enums import Resource, Card
 from board_config import VERTEX_ADJACENCY, TILE_ADJACENCY, Building
 from road import Road
 from game_state import GameState
+from vertex import Vertex
 
 
 class Board:
@@ -22,7 +23,7 @@ class Board:
     def __init__(self):
         self.players = []
         self.tiles = []
-        self.vertices = []
+        self.vertices = [Vertex() for _ in range(54)]
         self.roads = []
         self.resource_bank = {} # maps resource enum values (i.e. Resource.wheat) to a list of cards
         self.development_cards = []
@@ -177,7 +178,7 @@ class Board:
         if vertex.building != Building.none:
             return False
         # check if city or settlement is one vertex away (see catan rules for more info)
-        for neighbor_vertex_index in VERTEX_ADJACENCY[vertex]:
+        for neighbor_vertex_index in VERTEX_ADJACENCY[vertex_index]:
             if self.vertices[neighbor_vertex_index].building != Building.none:
                 return False
         return True

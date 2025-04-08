@@ -46,8 +46,8 @@ class GameState:
         self.state = TurnState.BEFORE_ROLL
 
     def is_build_allowed(self):
-        """returns truthy if current player can build a settlement right now"""
-        if self.state is TurnState.BUILDING and self.tags['settlement'] == True:
+        """returns truthy if current player can build a settlement or city right now"""
+        if self.state is TurnState.BUILDING:
             return True
         return False
 
