@@ -42,6 +42,10 @@ class Player:
     def play_knight(self):
         """Play a knight card if available, increment counter"""
         for card in self.dev_cards:
+            self.dev_cards.remove(card)
+            self.numKnights += 1
+            return True
+        return False  # No knight card to play
 
 
     def count_played_knights(self):
