@@ -32,6 +32,7 @@ class Board:
 
         self.beginner_setup()
         self.die_roll = (1, 1)
+        self.robber_tile = None # add a robber_tile field to track where the robber is currently placed
 
     def beginner_setup(self):
         """ Add 19 tiles to self.tiles
@@ -78,6 +79,12 @@ class Board:
         for resource in [Resource.brick, Resource.ore, Resource.sheep, Resource.wheat, Resource.wood]:
             # Add 19 of each resource type to the board's bank
             self.resource_bank[resource] = [Card(resource.value) for _ in range(19)]
+
+        # Set the robber up on the desert tile
+        for tile in self.tiles:
+            if tile.resource == Resource.desert:
+                self.robber_tile = tile
+                break
 
         # Initiate 4 players
         # First player is the user
