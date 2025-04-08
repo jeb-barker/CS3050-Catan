@@ -5,7 +5,7 @@ Handles game logic
 import random
 from tile import Tile
 from texture_enums import Resource, Card
-from board_config import VERTEX_ADJACENCY, TILE_ADJACENCY, Building
+from board_config import VERTEX_ADJACENCY, TILE_ADJACENCY, Building, BUILDING_COSTS
 from road import Road
 from game_state import GameState
 from vertex import Vertex
@@ -145,6 +145,11 @@ class Board:
         if building == Building.city:
             if owner.numCities == 0:
                 return False
+
+        # if the owner can't afford the building, don't let them.
+        if not owner.has_resources(BUILDING_COSTS[building]):
+            return False
+
 
         if building == Building.settlement:
             if owner.numSettlements == 0:

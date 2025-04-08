@@ -20,12 +20,20 @@ def on_click(x, y, renderer):
                 case "build_settlement":
                     # Only allowed if the board_state is in the build phase
                     if state.is_build_allowed and not state.tags['city']:
-                        state.tags['settlement'] = True
+                        # "toggle" the build button
+                        if state.tags['settlement']:
+                            state.tags['settlement'] = False
+                        else:
+                            state.tags['settlement'] = True
                 case "build_city":
                     # Only allowed if the board_state is in the build phase
                     # Also other tags can't be active at the same time.
                     if state.is_build_allowed and not state.tags['settlement']:
-                        state.tags['city'] = True
+                        # toggle the button
+                        if state.tags['city']:
+                            state.tags['city'] = False
+                        else:
+                            state.tags['city'] = True
                 case _:
                     pass
     vertex_buttons = renderer.get_vertex_buttons()
