@@ -247,7 +247,28 @@ class Board:
 
         # If roll == 7
         if roll == 7:
-            pass
+            # Each player with more than 7 resources discards half their hand (round down)
+            players_to_discard = []
+            for player in self.players:
+                if len(player.resources) >= 7:
+                    players_to_discard.append(player)
+
+            # Discard cards at random
+            for player in players_to_discard:
+                num_to_discard = len(player.resources) // 2
+                indices_to_discard = []
+                # Choose random indices in player's hand to discard
+                for i in range(num_to_discard):
+                    temp = random.randint(0, len(player.resources))
+                    while temp in indices_to_discard:
+                        temp += 1
+                    indices_to_discard.append(temp)
+                # Find what resources they are
+                resources_to_discard = []
+                for index in indices_to_discard:
+                    resources_to_discard.append(player.resources[index])
+                self.remove_resources(player, resources_to_discard)
+
         
         # trading
 
