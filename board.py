@@ -151,24 +151,23 @@ class Board:
                 return False
 
         vertex = self.vertices[vertex_index]
-        if self.is_valid_settle_spot(vertex_index):
-            # case if placing a settlement or city
-            if building == Building.settlement:
+        if building == Building.settlement:
+            if self.is_valid_settle_spot(vertex_index):
+                # case if placing a settlement or city
                 vertex.owner = owner
                 vertex.building = building
                 owner.numSettlements -= 1
                 return True
-
-            elif building == Building.city:
+        elif building == Building.city:
+            if self.is_valid_city_spot(owner, vertex_index):
                 vertex.owner = owner
                 vertex.building = building
                 owner.numCities -= 1
+                # the owner gets the settlement that they upgraded back
+                owner.numSettlements += 1
                 return True
 
-            else:
-                return False
-        else:
-            return False
+        return False
 
 
     def is_valid_settle_spot(self, vertex_index):

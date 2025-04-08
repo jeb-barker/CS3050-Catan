@@ -19,11 +19,12 @@ def on_click(x, y, renderer):
                         state.start_building_phase()
                 case "build_settlement":
                     # Only allowed if the board_state is in the build phase
-                    if state.is_build_allowed:
+                    if state.is_build_allowed and not state.tags['city']:
                         state.tags['settlement'] = True
                 case "build_city":
                     # Only allowed if the board_state is in the build phase
-                    if state.is_build_allowed:
+                    # Also other tags can't be active at the same time.
+                    if state.is_build_allowed and not state.tags['settlement']:
                         state.tags['city'] = True
                 case _:
                     pass
