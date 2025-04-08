@@ -109,6 +109,8 @@ class Board:
 
         # Check for adjacent roads
         for road in self.roads:
+            # This looks like it could be a bug? maybe it should be road.owner == owner
+            # Also I'm not sure about the logic below
             if road == owner:
                 if road.vertex1 == vertex1 or road.vertex2 == vertex1:
                     allowed = True
@@ -179,6 +181,15 @@ class Board:
             if self.vertices[neighbor_vertex_index].building != Building.none:
                 return False
         return True
+
+    def is_valid_city_spot(self, player, vertex_index):
+        """Is the given vertex_index a valid place for a city owned by the given player"""
+        vertex = self.vertices[vertex_index]
+        # Cities can only be placed on existing settlements owned by the player
+        if vertex.building == Building.settlement and vertex.owner == player:
+            return True
+        return False
+
 
     # Is the given edge a valid place for a player to place a road
     # Is the given vertex_index a valid place for a settlement

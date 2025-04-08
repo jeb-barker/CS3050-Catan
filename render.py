@@ -160,7 +160,7 @@ class Renderer():
         """draw each button on the screen"""
         for button in self.buttons:
             button.draw()
-        for button in self.vertex_buttons:
+        for button in self.get_vertex_buttons():
             if self.vertex_buttons[button] is not None:
                 self.vertex_buttons[button].draw()
 
@@ -566,5 +566,22 @@ class Renderer():
         return clickables
     
     def get_vertex_buttons(self):
-        """returns the dictionary containing the vertex buttons"""
-        return self.vertex_buttons
+        """returns the dictionary containing the vertex buttons that are active in the current game state"""
+        # Vertex buttons are only shown after the build buttons are pressed:
+        state = self.board.game_state
+        valid_buttons = {}
+        if state.tags['settlement']:
+            # show valid places to place a settlement
+            for vertex_index in self.vertex_buttons:
+                if vertex_index is not None:
+                    if self.board.is_valid_settle_spot(vertex_index):
+                        # only add valid settle spots
+                        valid_buttons[vertex_index] = self.vertex_buttons[vertex_index]
+        elif state.tags['city']:
+            # show valid places to place a settlement
+            for vertex_index in self.vertex_buttons:
+                if vertex_index is not None:
+                    if self.board.is_valid_city_spot(state.get_current_player(), vertex_index):
+                        # only add valid settle spots
+                        valid_buttons[vertex_index] = self.vertex_buttons[vertex_index]
+        return valid_buttons
