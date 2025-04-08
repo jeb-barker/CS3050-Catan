@@ -1,7 +1,7 @@
 """This file contains functions useful for handling game logic after buttons are clicked"""
 
 from texture_enums import Resource
-from board_config import Building
+from board_config import Building, BUILDING_COSTS
 
 def on_click(x, y, renderer):
     """Handle click events from the window."""
@@ -46,6 +46,10 @@ def on_click(x, y, renderer):
                         renderer.board.place_building(Building.city, state.get_current_player(), vertex_index)
                         state.tags['city'] = False
                     elif state.tags['settlement']:
+                        # if the state is in the start phase, give the player the requisite resources to place a settlement
+                        if state.is_start_phase():
+                            cost = BUILDING_COSTS[Building.settlement]
+                            renderer.board.add_resources(state.get_current_player(), cost)
                         renderer.board.place_building(Building.settlement, state.get_current_player(), vertex_index)
                         state.tags['settlement'] = False
                     elif state.tags['road']:

@@ -14,6 +14,7 @@ class GameState:
         self.tags = {'city': False,
                      'settlement': False,
                      'road': False}
+        self.is_start = True
 
     def get_current_player(self):
         """Returns the player whose turn it is."""
@@ -50,6 +51,14 @@ class GameState:
         if self.state is TurnState.BUILDING:
             return True
         return False
+    
+    def is_start_phase(self):
+        """returns truthy if the game is in the setup/start phase"""
+        return self.is_start
+    
+    def end_start_phase(self):
+        """transition from the start phase to the main game loop"""
+        self.is_start = False
 
     def get_ui_state(self):
         """Returns which buttons should be active."""

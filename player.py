@@ -1,7 +1,7 @@
 """Class that represents a player in the Catan game"""
 import copy
 
-from texture_enums import Resource
+from texture_enums import Resource, Card
 
 class Player:
     """
@@ -23,6 +23,7 @@ class Player:
     def has_resources(self, resources: list[Resource]):
         """Returns true if the player has the resources in the quantities supplied"""
         availible = copy.deepcopy(self.resources)
+        availible = [Resource(res.value) for res in availible]
         for resource in resources:
             if resource in availible:
                 availible.remove(resource)

@@ -147,6 +147,7 @@ class Board:
                 return False
 
         # if the owner can't afford the building, don't let them.
+        # special case is during the start phase, when the first 2 settlements are free
         if not owner.has_resources(BUILDING_COSTS[building]):
             return False
 
@@ -162,6 +163,8 @@ class Board:
                 vertex.owner = owner
                 vertex.building = building
                 owner.numSettlements -= 1
+                # remove the cost of the settlement from the player's hand
+                self.remove_resources(owner, BUILDING_COSTS[building])
                 return True
         elif building == Building.city:
             if self.is_valid_city_spot(owner, vertex_index):
@@ -170,6 +173,8 @@ class Board:
                 owner.numCities -= 1
                 # the owner gets the settlement that they upgraded back
                 owner.numSettlements += 1
+                # remove the cost of the city from the player's hand
+                self.remove_resources(owner, BUILDING_COSTS[building])
                 return True
 
         return False
@@ -270,16 +275,18 @@ class Board:
         removed_resources = []
         allowed = True
         for resource in resources:
-            if resource in player.resources:
-                removed_resources.append(player.resources.remove(resource))
+            if Card(resource.value) in player.resources:
+                player.resources.remove(Card(resource.value))
+                removed_resources.append(Card(resource.value))
             else:
                 allowed = False
         if allowed:
-            # TODO - Jeb
-            # add resources back to the bank
+            for card in removed_resources:
+                self.resource_bank[Resource(card.value)].append(Resource(card.value))
             return True
         else:
-            # add the resources back into the player's hand since this was not allowed
+            for card in removed_resources:
+                player.resources.append(card)
             return False
 
     # check winning conditions
