@@ -36,19 +36,12 @@ class Renderer():
 
     def __init__(self, window, board=None):
         self.window = window
-        # test player is TEMPORARY
-        test_player = Player(0, Color.red) 
-        test_player2 = Player(1, Color.blue) 
-        test_player3 = Player(2, Color.black) 
+
         # test_player.resources = [Resource.ore, Resource.sheep, Resource.wheat,
         #                          Resource.brick, Resource.wood]
 
         if board is None:
             self.board = Board()
-
-        self.board.players.append(test_player)
-        self.board.players.append(test_player2)
-        self.board.players.append(test_player3)
 
         self.load_images()
         self.tiles_batch = pyglet.graphics.Batch()

@@ -4,11 +4,12 @@ Handles game logic
 '''
 import random
 from tile import Tile
-from texture_enums import Resource, Card
+from texture_enums import Resource, Card, Color
 from board_config import VERTEX_ADJACENCY, TILE_ADJACENCY, Building, BUILDING_COSTS
 from road import Road
 from game_state import GameState
 from vertex import Vertex
+from player import Player
 
 
 class Board:
@@ -78,6 +79,17 @@ class Board:
             # Add 19 of each resource type to the board's bank
             self.resource_bank[resource] = [Card(resource.value) for _ in range(19)]
 
+        # Initiate 4 players
+        # First player is the user
+        self.players.append(Player(0, Color.red, True))
+
+        # Player 2-4 are AI
+        self.players.append(Player(1, Color.green, False))
+        self.players.append(Player(2, Color.blue, False))
+        self.players.append(Player(3, Color.black, False))
+
+        # Start game state at "before roll" and user player's turn
+
 
     def get_tile_at(self, coords):
         """ Returns the tile at given axial coordinates """
@@ -112,7 +124,7 @@ class Board:
         for road in self.roads:
             # This looks like it could be a bug? maybe it should be road.owner == owner
             # Also I'm not sure about the logic below
-            if road == owner:
+            if road.owner == owner:
                 if road.vertex1 == vertex1 or road.vertex2 == vertex1:
                     allowed = True
                     break
@@ -222,29 +234,22 @@ class Board:
         roll = die1 + die2
         self.die_roll = (die1, die2)
 
-        # Determine resources to distribute
-        new_resource_tiles = []
-
+        # Iterate through tiles
         for i in range(len(self.tiles)):
             # First: Check if tile's gen num matches most recent roll
             if self.tiles[i].gen_num == roll:
                 # new_resource_tiles.append(tile)
                 for vertex in TILE_ADJACENCY[i]:
+                    # Next check for players with settlements placed on its nearby vertices
                     if vertex.building != Building.none:
+                        # Distribute resources
                         self.add_resources(vertex.owner, self.tiles[i].resource)
 
-        # Distribute resources
-        # Iterate through tiles in new_resource_tiles
-
-
-        '''
-        for player in self.players:
-            # Next check if player has a building on an adjacent vertex
-            
-            self.add_resources(player, new_resources)
-            '''
-
-    # trading
+        # If roll == 7
+        if roll == 7:
+            pass
+        
+        # trading
 
     def add_resources(self, player, resources: list[Resource]):
         """adding/removing cards from hand -> maybe move to Player class"""
