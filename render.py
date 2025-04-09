@@ -65,6 +65,8 @@ class Renderer():
         self.dice_sprites = []
         self.load_dice_sprites()
 
+        self.road_sprites = []
+
 
     def update(self):
         """Function to update the screen"""
@@ -86,6 +88,7 @@ class Renderer():
         self.draw_player_info()
         self.draw_buttons()
         self.draw_dice()
+        self.draw_roads()
 
 
 
@@ -171,6 +174,30 @@ class Renderer():
         index_2 = (roll[1]-1)*2 + 1
         self.dice_sprites[index_1].draw()
         self.dice_sprites[index_2].draw()
+
+    def draw_roads(self):
+        """render the roads on the screen.
+           Also adds new road sprites if new roads have been placed"""
+        roads = self.board.roads
+        curr_player = self.board.game_state.get_current_player()
+        if len(roads) != len(self.road_sprites):
+            # if there is a new road to create...
+            new_roads = roads[len(self.road_sprites):]
+            for road in new_roads:
+                # for each road create and position a line between its two vertices
+                v1 = self.vertex_buttons[road.vertex1]
+                v2 = self.vertex_buttons[road.vertex2]
+                v1_x = v1.center[0]
+                v1_y = v1.center[1]
+                v2_x = v2.center[0]
+                v2_y = v2.center[1]
+                self.road_sprites.append(pyglet.shapes.Line(v1_x, v1_y, v2_x, v2_y, thickness=10.0, color=curr_player.color.value))
+
+        # render all roads in road_sprites
+        for road in self.road_sprites:
+            road.draw()
+                
+
 
 
     def load_images(self):
@@ -442,6 +469,7 @@ class Renderer():
         self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, button_name="roll_dice"))
         self.buttons.append(Button(False, (self.window.width/2, self.window.height/8), width=50, height=50, button_name="build_settlement"))
         self.buttons.append(Button(False, (self.window.width/2 + 60, self.window.height/8), width=50, height=50, button_name="build_city"))
+        self.buttons.append(Button(False, (self.window.width/2 + 120, self.window.height/8), width=50, height=50, button_name="build_road"))
 
         # initialize vertex buttons:
         for index, tile_sprite in enumerate(self.tile_sprites):
@@ -576,14 +604,30 @@ class Renderer():
             # show valid places to place a settlement
             for vertex_index in self.vertex_buttons:
                 if vertex_index is not None:
-                    if self.board.is_valid_settle_spot(vertex_index):
+                    if self.board.is_valid_settle_spot(state.get_current_player(), vertex_index):
                         # only add valid settle spots
                         valid_buttons[vertex_index] = self.vertex_buttons[vertex_index]
         elif state.tags['city']:
-            # show valid places to place a settlement
+            # show valid places to place a city
             for vertex_index in self.vertex_buttons:
                 if vertex_index is not None:
                     if self.board.is_valid_city_spot(state.get_current_player(), vertex_index):
-                        # only add valid settle spots
+                        # only add valid city spots
                         valid_buttons[vertex_index] = self.vertex_buttons[vertex_index]
+        elif state.tags['road']:
+            if state.tags['road_v1'] is None:
+                # show valid places to start a road
+                for vertex_index in self.vertex_buttons:
+                    if vertex_index is not None:
+                        for vertex_neighbor_index in self.vertex_buttons:
+                            if self.board.is_valid_road_spot(state.get_current_player(), vertex_index, vertex_neighbor_index):
+                                # only add valid road starts
+                                valid_buttons[vertex_index] = self.vertex_buttons[vertex_index]
+            else:
+                # show valid places to end a road
+                for vertex_index in self.vertex_buttons:
+                    if vertex_index is not None:
+                        if self.board.is_valid_road_spot(state.get_current_player(), state.tags['road_v1'], vertex_index):
+                            # only add valid road ends
+                            valid_buttons[vertex_index] = self.vertex_buttons[vertex_index]
         return valid_buttons

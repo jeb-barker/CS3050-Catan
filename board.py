@@ -89,10 +89,12 @@ class Board:
     # Place a road, checking if it connects to an existing road, city or settlement
     # owned by that player, that they have roads left and there isn't already
     # a road at specified location
-    def place_road(self, owner, vertex1, vertex2):
+    def place_road(self, owner, vertex_index1, vertex_index2):
         """ Place road between two vertices. Returns true if successful
          and returns false if unable to place road """
 
+        vertex1 = self.vertices[vertex_index1]
+        vertex2 = self.vertices[vertex_index2]
         # Check if player has less than 15 roads
         if owner.numRoads == 0:
             return False
@@ -110,15 +112,21 @@ class Board:
 
         # Check for adjacent roads
         for road in self.roads:
-            # This looks like it could be a bug? maybe it should be road.owner == owner
-            # Also I'm not sure about the logic below
-            if road == owner:
-                if road.vertex1 == vertex1 or road.vertex2 == vertex1:
+            if road.owner == owner:
+                if road.vertex1 == vertex_index1 or road.vertex2 == vertex_index1:
                     allowed = True
                     break
-                elif road.vertex2 == vertex1 or road.vertex2 == vertex2:
+                elif road.vertex2 == vertex_index1 or road.vertex2 == vertex_index2:
                     allowed = True
                     break
+        
+        # check if vertices are adjacent to each other:
+        if vertex_index2 not in VERTEX_ADJACENCY[vertex_index1]:
+            allowed = False
+        if vertex_index1 not in VERTEX_ADJACENCY[vertex_index2]:
+            allowed = False
+        if vertex_index2 == vertex_index1:
+            allowed = False
 
         # Abort or allow to proceed based on allowed value
         if allowed is False:
@@ -126,17 +134,20 @@ class Board:
 
         # Check if road exists between two vertices already
         for road in self.roads:
-            if road.vertex1 == vertex1 and road.vertex2 == vertex2:
+            if road.vertex1 == vertex_index1 and road.vertex2 == vertex_index2:
                 return False
-            elif road.vertex1 == vertex2 and road.vertex2 == vertex1:
+            elif road.vertex1 == vertex_index2 and road.vertex2 == vertex_index1:
                 return False
-            elif vertex1 == vertex2:
+            elif vertex_index1 == vertex_index2:
                 return False
             else:
-                if vertex2 in VERTEX_ADJACENCY[road.vertex1]:
-                    self.roads.append(Road(owner=owner, vertex1=vertex1, vertex2=vertex2))
+                if vertex_index2 in VERTEX_ADJACENCY[road.vertex1]:
+                    self.roads.append(Road(owner=owner, vertex1=vertex_index1, vertex2=vertex_index2))
                     owner.numRoads -= 1
                     return True
+        self.roads.append(Road(owner=owner, vertex1=vertex_index1, vertex2=vertex_index2))
+        owner.numRoads -= 1
+        return True
 
     def place_building(self, building, owner, vertex_index):
         """place building at the given vertex_index
@@ -158,7 +169,7 @@ class Board:
 
         vertex = self.vertices[vertex_index]
         if building == Building.settlement:
-            if self.is_valid_settle_spot(vertex_index):
+            if self.is_valid_settle_spot(owner, vertex_index):
                 # case if placing a settlement or city
                 vertex.owner = owner
                 vertex.building = building
@@ -180,7 +191,7 @@ class Board:
         return False
 
 
-    def is_valid_settle_spot(self, vertex_index):
+    def is_valid_settle_spot(self, owner, vertex_index):
         """Is the given vertex_index a valid place for a settlement"""
         vertex = self.vertices[vertex_index]
         # check if city or settlement is there already:
@@ -203,9 +214,59 @@ class Board:
 
     # Is the given edge a valid place for a player to place a road
     # Is the given vertex_index a valid place for a settlement
-    def is_valid_road_spot(self, vertex_index):
+    def is_valid_road_spot(self, owner, vertex_index1, vertex_index2):
         """TODO: Check if the given vertex is a valid spot for a road. Possibly Duplicate."""
-        pass
+        vertex1 = self.vertices[vertex_index1]
+        vertex2 = self.vertices[vertex_index2]
+        # Check if player has less than 15 roads
+        if owner.numRoads == 0:
+            return False
+
+        # Bool indicating whether road is allowed
+        allowed = False
+
+        # Check if player has a road or city or settlement there already
+        # Check buildings first
+        if vertex1.owner == owner or vertex2.owner == owner:
+            if vertex1.building == Building.city or vertex1.building == Building.settlement:
+                allowed = True
+            elif vertex2.building == Building.city or vertex2.building == Building.settlement:
+                allowed = True
+
+        # Check for adjacent roads
+        for road in self.roads:
+            if road.owner == owner:
+                if road.vertex1 == vertex_index1 or road.vertex2 == vertex_index1:
+                    allowed = True
+                    break
+                elif road.vertex2 == vertex_index1 or road.vertex2 == vertex_index2:
+                    allowed = True
+                    break
+        
+        # check if vertices are adjacent to each other:
+        if vertex_index2 not in VERTEX_ADJACENCY[vertex_index1]:
+            allowed = False
+        if vertex_index1 not in VERTEX_ADJACENCY[vertex_index2]:
+            allowed = False
+        if vertex_index2 == vertex_index1:
+            allowed = False
+
+        # Abort or allow to proceed based on allowed value
+        if allowed is False:
+            return False
+
+        # Check if road exists between two vertices already
+        for road in self.roads:
+            if road.vertex1 == vertex_index1 and road.vertex2 == vertex_index2:
+                return False
+            elif road.vertex1 == vertex_index2 and road.vertex2 == vertex_index1:
+                return False
+            elif vertex_index1 == vertex_index2:
+                return False
+            else:
+                if vertex_index2 in VERTEX_ADJACENCY[road.vertex1]:
+                    return True
+        return True
 
     # start turn: roll die/distribute resources
     def start_turn(self, player):
@@ -282,7 +343,7 @@ class Board:
                 allowed = False
         if allowed:
             for card in removed_resources:
-                self.resource_bank[Resource(card.value)].append(Resource(card.value))
+                self.resource_bank[Resource(card.value)].append(card)
             return True
         else:
             for card in removed_resources:
@@ -296,14 +357,15 @@ class Board:
         player_roads = [road if road.owner == player else None for road in self.roads]
         road_graph = {}
         for road in player_roads:
-            # ensure vertices are in the graph
-            if road.vertex1 not in road_graph.keys():
-                road_graph[road.vertex1] = []
-            if road.vertex2 not in road_graph.keys():
-                road_graph[road.vertex2] = []
-            # add two edges to make the graph undirected
-            road_graph[road.vertex1].append(road.vertex2)
-            road_graph[road.vertex2].append(road.vertex1)
+            if road is not None:
+                # ensure vertices are in the graph
+                if road.vertex1 not in road_graph.keys():
+                    road_graph[road.vertex1] = []
+                if road.vertex2 not in road_graph.keys():
+                    road_graph[road.vertex2] = []
+                # add two edges to make the graph undirected
+                road_graph[road.vertex1].append(road.vertex2)
+                road_graph[road.vertex2].append(road.vertex1)
 
         # road_graph is now an adjacency list
         # connecting vertices that have the given player's roads between them.
@@ -318,7 +380,7 @@ class Board:
 
             path_lengths = [0]
             # check if a different player's settlement is built on this vertex.
-            if self.vertices[curr].owner in [player, None]:
+            if self.vertices[curr].owner not in [player, None]:
                 # if it is, then don't traverse and return the length as 0
                 return 0
 

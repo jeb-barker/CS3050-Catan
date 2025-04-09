@@ -13,7 +13,8 @@ class GameState:
         self.state = TurnState.BEFORE_ROLL
         self.tags = {'city': False,
                      'settlement': False,
-                     'road': False}
+                     'road': False,
+                     'road_v1': None}
         self.is_start = True
 
     def get_current_player(self):

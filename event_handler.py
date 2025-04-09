@@ -14,12 +14,12 @@ def on_click(x, y, renderer):
                     renderer.board.add_resources(state.get_current_player(), [Resource(4)])
                 case "roll_dice":
                     # Only allowed if the board_state is in the pre-roll phase
-                    if state.roll_dice():
+                    if not state.is_start_phase() and state.roll_dice():
                         renderer.board.start_turn(state.get_current_player())
                         state.start_building_phase()
                 case "build_settlement":
                     # Only allowed if the board_state is in the build phase
-                    if state.is_build_allowed and not state.tags['city']:
+                    if state.is_build_allowed and not state.tags['city'] and not state.tags['road']:
                         # "toggle" the build button
                         if state.tags['settlement']:
                             state.tags['settlement'] = False
@@ -28,12 +28,21 @@ def on_click(x, y, renderer):
                 case "build_city":
                     # Only allowed if the board_state is in the build phase
                     # Also other tags can't be active at the same time.
-                    if state.is_build_allowed and not state.tags['settlement']:
+                    if state.is_build_allowed and not state.tags['settlement'] and not state.tags['road']:
                         # toggle the button
                         if state.tags['city']:
                             state.tags['city'] = False
                         else:
                             state.tags['city'] = True
+                case "build_road":
+                    # Only allowed if the board_state is in the build phase
+                    # Also other tags can't be active at the same time.
+                    if state.is_build_allowed and not state.tags['settlement'] and not state.tags['city']:
+                        # toggle the button
+                        if state.tags['road']:
+                            state.tags['road'] = False
+                        else:
+                            state.tags['road'] = True
                 case _:
                     pass
     vertex_buttons = renderer.get_vertex_buttons()
@@ -53,8 +62,14 @@ def on_click(x, y, renderer):
                         renderer.board.place_building(Building.settlement, state.get_current_player(), vertex_index)
                         state.tags['settlement'] = False
                     elif state.tags['road']:
-                        #renderer.board.place_road(renderer.board.players[0], )
-                        # TODO - add roads
-                        pass
+                        if state.tags['road_v1'] is None:
+                            state.tags['road_v1'] = vertex_index
+                        else:
+                            vertex1 = state.tags['road_v1']
+                            renderer.board.place_road(state.get_current_player(), vertex1, vertex_index)
+                            state.tags['road_v1'] = None
+                            state.tags['road'] = False
+                        
+
                 case _:
                     pass
