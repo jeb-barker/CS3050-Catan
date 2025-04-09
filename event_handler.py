@@ -34,6 +34,13 @@ def on_click(x, y, renderer):
                             state.tags['city'] = False
                         else:
                             state.tags['city'] = True
+                case "end_turn":
+                    # Only allowed if in the building phase
+                    if state.end_turn():
+                        # clear building flags when turn ends
+                        state.tags['settlement'] = False
+                        state.tags['city'] = False
+                        state.tags['road'] = False
                 case "build_road":
                     # Only allowed if the board_state is in the build phase
                     # Also other tags can't be active at the same time.
@@ -45,6 +52,7 @@ def on_click(x, y, renderer):
                             state.tags['road'] = True
                 case _:
                     pass
+
     vertex_buttons = renderer.get_vertex_buttons()
     for vertex_index in vertex_buttons:
         if vertex_buttons[vertex_index].contains((x,y)):

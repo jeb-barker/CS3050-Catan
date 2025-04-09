@@ -36,19 +36,12 @@ class Renderer():
 
     def __init__(self, window, board=None):
         self.window = window
-        # test player is TEMPORARY
-        test_player = Player(0, Color.red) 
-        test_player2 = Player(1, Color.blue) 
-        test_player3 = Player(2, Color.black) 
+
         # test_player.resources = [Resource.ore, Resource.sheep, Resource.wheat,
         #                          Resource.brick, Resource.wood]
 
         if board is None:
             self.board = Board()
-
-        self.board.players.append(test_player)
-        self.board.players.append(test_player2)
-        self.board.players.append(test_player3)
 
         self.load_images()
         self.tiles_batch = pyglet.graphics.Batch()
@@ -469,6 +462,7 @@ class Renderer():
         self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, button_name="roll_dice"))
         self.buttons.append(Button(False, (self.window.width/2, self.window.height/8), width=50, height=50, button_name="build_settlement"))
         self.buttons.append(Button(False, (self.window.width/2 + 60, self.window.height/8), width=50, height=50, button_name="build_city"))
+        self.buttons.append(Button(False, (self.window.width / 2, 100), width=50, height=50, button_name="end_turn"))
         self.buttons.append(Button(False, (self.window.width/2 + 120, self.window.height/8), width=50, height=50, button_name="build_road"))
 
         # initialize vertex buttons:
