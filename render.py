@@ -458,7 +458,7 @@ class Renderer():
 
     def init_buttons(self):
         """Initialize buttons. placeholder for now."""
-        self.buttons.append(Button(False, (self.window.width/2, 5), width=10, height=10, button_name="add_resource"))
+        self.buttons.append(Button(False, (self.window.width/2 + 60, 100), width=50, height=50, button_name="run_ai_turn"))
         self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, button_name="roll_dice"))
         self.buttons.append(Button(False, (self.window.width/2, self.window.height/8), width=50, height=50, button_name="build_settlement"))
         self.buttons.append(Button(False, (self.window.width/2 + 60, self.window.height/8), width=50, height=50, button_name="build_city"))
@@ -635,7 +635,7 @@ class Renderer():
         valid_spots = self.get_vertex_buttons()
 
         # Choose random index and build settlement there
-        valid_spots.keys.shuffle()
+        valid_spots.keys().shuffle()
         self.board.place_building(player, valid_spots[valid_spots.keys[0]])
         state.tags['settlement'] = False
 
