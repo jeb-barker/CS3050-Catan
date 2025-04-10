@@ -60,6 +60,20 @@ def on_click(x, y, renderer):
                                 state.tags['road'] = False
                             else:
                                 state.tags['road'] = True
+                case "run_ai_turn":
+                    # Button for the user to press to advance the game
+                    if not state.is_start_phase():
+                        # clear building flags when turn ends
+                        state.tags['settlement'] = False
+                        state.tags['city'] = False
+                        state.tags['road'] = False
+                        # check if the (new) player is AI
+                        if not state.get_current_player().is_user:
+                            renderer.ai_start_turn(state.get_current_player())
+
+                    elif state.is_start_phase():
+                        if not state.get_current_player().is_user:
+                            renderer.ai_start_turn(state.get_current_player())
                 case _:
                     pass
 
