@@ -44,6 +44,9 @@ def on_click(x, y, renderer):
                         state.tags['settlement'] = False
                         state.tags['city'] = False
                         state.tags['road'] = False
+                        # check if the (new) player is AI
+                        if not state.get_current_player().is_user:
+                            renderer.ai_start_turn(state.get_current_player())
                 case "build_road":
                     # Only allowed if the board_state is in the build phase
                     # Also other tags can't be active at the same time.
