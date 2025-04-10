@@ -404,6 +404,15 @@ class Board:
             for card in removed_resources:
                 player.resources.append(card)
             return False
+        
+    def get_resources_from_vertex(self, vertex_index):
+        """retuns a list of Resources from the surrounding tiles from the vertex"""
+        resources = []
+        for tile_index, tile in enumerate(self.tiles):
+            if vertex_index in TILE_ADJACENCY[tile_index]:
+                if tile.resource is not Resource.desert:
+                    resources.append(tile.resource)
+        return resources
 
     # check winning conditions
 

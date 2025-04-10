@@ -55,7 +55,6 @@ class GameState:
         returns True if this was the player's second settlement"""
         # reset tags
         self.tags['settlements_placed_turn'] = 0
-        self.tags['settlement_pos'] = None
         # if the settlements placed is more than the number of players return True
         if self.tags['settlements_placed'] > len(self.players):
             # move the turn counter backwards if this is the second time around
