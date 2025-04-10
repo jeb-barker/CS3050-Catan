@@ -11,6 +11,7 @@ from pyglet.gl import (
     GL_BLEND, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_COLOR_BUFFER_BIT
 )
 import math
+import random
 
 from board import Board
 from board_config import TILE_ADJACENCY, BUILDING_COSTS, Building
@@ -632,28 +633,28 @@ class Renderer():
         state.tags['settlement'] = True
         cost = BUILDING_COSTS[Building.settlement]
         self.board.add_resources(state.get_current_player(), cost)
-        valid_spots = self.get_vertex_buttons()
+        valid_spots = list(self.get_vertex_buttons().keys())
 
         # Choose random index and build settlement there
-        valid_spots.keys().shuffle()
-        self.board.place_building(player, valid_spots[valid_spots.keys[0]])
+        random.shuffle(valid_spots)
+        self.board.place_building(Building.settlement, player, valid_spots[0])
         state.tags['settlement'] = False
 
         # Look for road spot
         state.tags['road'] = True
         cost = BUILDING_COSTS[Building.road]
         self.board.add_resources(player, cost)
-        valid_spots = self.get_vertex_buttons()
+        valid_spots = list(self.get_vertex_buttons().keys())
 
         # Choose a random index and place first road vertex there
-        valid_spots.keys.shuffle()
-        v1 = valid_spots[valid_spots.keys[0]]
+        random.shuffle(valid_spots)
+        v1 = valid_spots[0]
         state.tags['road_v1'] = v1
 
         # Choose the second vertex
-        valid_spots = self.get_vertex_buttons()
-        valid_spots.keys.shuffle()
-        v2 = valid_spots[valid_spots.keys[0]]
+        valid_spots = list(self.get_vertex_buttons().keys())
+        random.shuffle(valid_spots)
+        v2 = valid_spots[0]
         self.board.place_road(player, v1, v2)
         state.tags['road_v1'] = None
         state.tags['road'] = False
