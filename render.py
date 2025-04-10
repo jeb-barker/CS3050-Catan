@@ -633,11 +633,33 @@ class Renderer():
         cost = BUILDING_COSTS[Building.settlement]
         self.board.add_resources(state.get_current_player(), cost)
         valid_spots = self.get_vertex_buttons()
+
+        # Choose random index and build settlement there
+        valid_spots.keys.shuffle()
+        self.board.place_building(player, valid_spots[valid_spots.keys[0]])
         state.tags['settlement'] = False
 
         # Look for road spot
+        state.tags['road'] = True
+        cost = BUILDING_COSTS[Building.road]
+        self.board.add_resources(player, cost)
+        valid_spots = self.get_vertex_buttons()
+
+        # Choose a random index and place first road vertex there
+        valid_spots.keys.shuffle()
+        v1 = valid_spots[valid_spots.keys[0]]
+        state.tags['road_v1'] = v1
+
+        # Choose the second vertex
+        valid_spots = self.get_vertex_buttons()
+        valid_spots.keys.shuffle()
+        v2 = valid_spots[valid_spots.keys[0]]
+        self.board.place_road(player, v1, v2)
+        state.tags['road_v1'] = None
+        state.tags['road'] = False
 
         # Call end turn start phase from gamestate
+        state.end_turn_start_phase()
 
     def ai_turn(self, player):
         # Call start turn
