@@ -55,6 +55,11 @@ class GameState:
         returns True if this was the player's second settlement"""
         # reset tags
         self.tags['settlements_placed_turn'] = 0
+        # if the number of settlements placed is 2 per player, end the start phase.
+        if self.tags['settlements_placed'] == 2 * len(self.players):
+            self.is_start = False
+            self.state = TurnState.BEFORE_ROLL
+            return True
         # if the settlements placed is more than the number of players return True
         if self.tags['settlements_placed'] > len(self.players):
             # move the turn counter backwards if this is the second time around
