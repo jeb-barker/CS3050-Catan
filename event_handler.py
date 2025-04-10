@@ -104,6 +104,9 @@ def on_click(x, y, renderer):
                         # if the first point has been assigned,
                         # the button clicked is the second point.
                             vertex1 = state.tags['road_v1']
+                            # give the player the cost of the road
+                            cost = BUILDING_COSTS[Building.road]
+                            renderer.board.add_resources(state.get_current_player(), cost)
                             renderer.board.place_road(state.get_current_player(), vertex1, vertex_index)
                             state.tags['road_v1'] = None
                             state.tags['road'] = False
