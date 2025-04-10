@@ -638,6 +638,7 @@ class Renderer():
         # Choose random index and build settlement there
         random.shuffle(valid_spots)
         self.board.place_building(Building.settlement, player, valid_spots[0])
+        state.tags['settlement_pos'] = valid_spots[0]
         state.tags['settlement'] = False
 
         # Look for road spot
