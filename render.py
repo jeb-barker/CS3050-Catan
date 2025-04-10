@@ -172,7 +172,6 @@ class Renderer():
         """render the roads on the screen.
            Also adds new road sprites if new roads have been placed"""
         roads = self.board.roads
-        curr_player = self.board.game_state.get_current_player()
         if len(roads) != len(self.road_sprites):
             # if there is a new road to create...
             new_roads = roads[len(self.road_sprites):]
@@ -184,7 +183,8 @@ class Renderer():
                 v1_y = v1.center[1]
                 v2_x = v2.center[0]
                 v2_y = v2.center[1]
-                self.road_sprites.append(pyglet.shapes.Line(v1_x, v1_y, v2_x, v2_y, thickness=10.0, color=curr_player.color.value))
+                owner = road.owner
+                self.road_sprites.append(pyglet.shapes.Line(v1_x, v1_y, v2_x, v2_y, thickness=10.0, color=owner.color.value))
 
         # render all roads in road_sprites
         for road in self.road_sprites:
