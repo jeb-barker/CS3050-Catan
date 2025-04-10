@@ -16,7 +16,7 @@ def on_click(x, y, renderer):
                         state.start_building_phase()
                 case "build_settlement":
                     # Only allowed if the board_state is in the build phase
-                    if state.is_build_allowed and \
+                    if state.is_build_allowed() and \
                     not state.tags['city'] and \
                     not state.tags['road']:
                         # "toggle" the build button
@@ -28,7 +28,7 @@ def on_click(x, y, renderer):
                     # Only allowed if the board_state is in the build phase
                     # Also other tags can't be active at the same time.
                     # Also cannot be in the start phase
-                    if state.is_build_allowed and \
+                    if state.is_build_allowed() and \
                     not state.tags['settlement'] and \
                     not state.tags['road'] and \
                     not state.is_start_phase():
@@ -44,16 +44,10 @@ def on_click(x, y, renderer):
                         state.tags['settlement'] = False
                         state.tags['city'] = False
                         state.tags['road'] = False
-                        # check if the (new) player is AI
-                        if not state.get_current_player().is_user:
-                            if state.is_start_phase():
-                                renderer.ai_start_turn(state.get_current_player())
-                            else:
-                                renderer.ai_turn(state.get_current_player())
                 case "build_road":
                     # Only allowed if the board_state is in the build phase
                     # Also other tags can't be active at the same time.
-                    if state.is_build_allowed and \
+                    if state.is_build_allowed() and \
                     not state.tags['settlement'] and \
                     not state.tags['city']:
                         # In the start phase, roads cannot be placed before settlements
@@ -65,7 +59,7 @@ def on_click(x, y, renderer):
                                 state.tags['road'] = True
                 case "run_ai_turn":
                     # Button for the user to press to advance the game
-                    if not state.is_start_phase():
+                    if not state.get_current_player().is_user and not state.is_start_phase():
                         # clear building flags when turn ends
                         state.tags['settlement'] = False
                         state.tags['city'] = False
@@ -73,7 +67,6 @@ def on_click(x, y, renderer):
                         # check if the (new) player is AI
                         if not state.get_current_player().is_user:
                             renderer.ai_turn(state.get_current_player())
-
                     elif state.is_start_phase():
                         if not state.get_current_player().is_user:
                             renderer.ai_start_turn(state.get_current_player())

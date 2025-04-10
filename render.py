@@ -671,7 +671,11 @@ class Renderer():
     def ai_turn(self, player):
         state = self.board.game_state
         # Call start turn
+        state.roll_dice()
         self.board.start_turn(player)
+
+        # move the game_state
+        state.start_building_phase()
 
         # Look for legal settle spots
         state.tags['settlement'] = True
