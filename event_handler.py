@@ -93,8 +93,13 @@ def on_click(x, y, renderer):
                             # check if settlement has been placed already this turn for start_phase
                             if state.is_start_phase():
                                 if state.tags['settlements_placed_turn'] == 1:
-                                    if state.end_turn_start_phase():
+                                    previous_player = state.get_current_player()
+                                    second_settle = state.end_turn_start_phase()
+                                    if second_settle:
+                                        # self.board.add_resources(previous_player, )
                                         pass
+                                        # give resources to previous player 
+                                        
 
                 case _:
                     pass
