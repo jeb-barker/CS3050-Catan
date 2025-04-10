@@ -195,6 +195,9 @@ class Board:
                 owner.numSettlements -= 1
                 # remove the cost of the settlement from the player's hand
                 self.remove_resources(owner, BUILDING_COSTS[building])
+                # update tags
+                self.game_state.tags['settlements_placed_turn'] += 1
+                self.game_state.tags['settlements_placed'] += 1
                 return True
         elif building == Building.city:
             if self.is_valid_city_spot(owner, vertex_index):
@@ -220,7 +223,17 @@ class Board:
         for neighbor_vertex_index in VERTEX_ADJACENCY[vertex_index]:
             if self.vertices[neighbor_vertex_index].building != Building.none:
                 return False
-        return True
+
+        # If we are in the start phase, these checks are sufficient
+        if self.game_state.is_start_phase():
+            return True
+        # If we are in the main phase of the game, 
+        # Look for a road that starts/stops on the given vertex
+        for road in self.roads:
+            # if vertex is on the end of a road owned by the given owner, return True
+            if vertex_index in [road.vertex1, road.vertex2] and road.owner is owner:
+                return True
+        return False
 
     def is_valid_city_spot(self, player, vertex_index):
         """Is the given vertex_index a valid place for a city owned by the given player"""
@@ -261,7 +274,7 @@ class Board:
                 elif road.vertex2 == vertex_index1 or road.vertex2 == vertex_index2:
                     allowed = True
                     break
-        
+
         # check if vertices are adjacent to each other:
         if vertex_index2 not in VERTEX_ADJACENCY[vertex_index1]:
             allowed = False
@@ -269,6 +282,15 @@ class Board:
             allowed = False
         if vertex_index2 == vertex_index1:
             allowed = False
+
+        # In the start phase...
+        # Roads must be adjacent to the settlement placed
+        if self.game_state.is_start_phase():
+            settle_index = self.game_state.tags['settlement_pos']
+            if vertex_index2 != settle_index and vertex_index1 != settle_index:
+                allowed = False
+            if vertex_index2 == vertex_index1:
+                allowed = False
 
         # Abort or allow to proceed based on allowed value
         if allowed is False:

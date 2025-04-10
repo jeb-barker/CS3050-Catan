@@ -9,9 +9,6 @@ def on_click(x, y, renderer):
     for clickable in renderer.get_clickables():
         if clickable.contains((x,y)):
             match clickable.button_name:
-                case "add_resource":
-                    # debug button TODO: remove
-                    renderer.board.add_resources(state.get_current_player(), [Resource(4)])
                 case "roll_dice":
                     # Only allowed if the board_state is in the pre-roll phase
                     if not state.is_start_phase() and state.roll_dice():
@@ -19,7 +16,9 @@ def on_click(x, y, renderer):
                         state.start_building_phase()
                 case "build_settlement":
                     # Only allowed if the board_state is in the build phase
-                    if state.is_build_allowed and not state.tags['city'] and not state.tags['road']:
+                    if state.is_build_allowed and \
+                    not state.tags['city'] and \
+                    not state.tags['road']:
                         # "toggle" the build button
                         if state.tags['settlement']:
                             state.tags['settlement'] = False
@@ -28,7 +27,11 @@ def on_click(x, y, renderer):
                 case "build_city":
                     # Only allowed if the board_state is in the build phase
                     # Also other tags can't be active at the same time.
-                    if state.is_build_allowed and not state.tags['settlement'] and not state.tags['road']:
+                    # Also cannot be in the start phase
+                    if state.is_build_allowed and \
+                    not state.tags['settlement'] and \
+                    not state.tags['road'] and \
+                    not state.is_start_phase():
                         # toggle the button
                         if state.tags['city']:
                             state.tags['city'] = False
@@ -36,7 +39,7 @@ def on_click(x, y, renderer):
                             state.tags['city'] = True
                 case "end_turn":
                     # Only allowed if in the building phase
-                    if state.end_turn():
+                    if not state.is_start_phase() and state.end_turn():
                         # clear building flags when turn ends
                         state.tags['settlement'] = False
                         state.tags['city'] = False
@@ -44,12 +47,16 @@ def on_click(x, y, renderer):
                 case "build_road":
                     # Only allowed if the board_state is in the build phase
                     # Also other tags can't be active at the same time.
-                    if state.is_build_allowed and not state.tags['settlement'] and not state.tags['city']:
-                        # toggle the button
-                        if state.tags['road']:
-                            state.tags['road'] = False
-                        else:
-                            state.tags['road'] = True
+                    if state.is_build_allowed and \
+                    not state.tags['settlement'] and \
+                    not state.tags['city']:
+                        # In the start phase, roads cannot be placed before settlements
+                        if (not state.is_start_phase()) or state.tags['settlements_placed_turn'] == 1:
+                            # toggle the button
+                            if state.tags['road']:
+                                state.tags['road'] = False
+                            else:
+                                state.tags['road'] = True
                 case _:
                     pass
 
@@ -63,21 +70,31 @@ def on_click(x, y, renderer):
                         renderer.board.place_building(Building.city, state.get_current_player(), vertex_index)
                         state.tags['city'] = False
                     elif state.tags['settlement']:
-                        # if the state is in the start phase, give the player the requisite resources to place a settlement
+                        # if the state is in the start phase, 
+                        # give the player the requisite resources to place a settlement
                         if state.is_start_phase():
                             cost = BUILDING_COSTS[Building.settlement]
                             renderer.board.add_resources(state.get_current_player(), cost)
+                            state.tags['settlement_pos'] = vertex_index
                         renderer.board.place_building(Building.settlement, state.get_current_player(), vertex_index)
                         state.tags['settlement'] = False
                     elif state.tags['road']:
+                        # if the first point hasn't been assigned,
+                        # the button clicked is the first point
                         if state.tags['road_v1'] is None:
                             state.tags['road_v1'] = vertex_index
                         else:
+                        # if the first point has been assigned,
+                        # the button clicked is the second point.
                             vertex1 = state.tags['road_v1']
                             renderer.board.place_road(state.get_current_player(), vertex1, vertex_index)
                             state.tags['road_v1'] = None
                             state.tags['road'] = False
-                        
+                            # check if settlement has been placed already this turn for start_phase
+                            if state.is_start_phase():
+                                if state.tags['settlements_placed_turn'] == 1:
+                                    if state.end_turn_start_phase():
+                                        pass
 
                 case _:
                     pass

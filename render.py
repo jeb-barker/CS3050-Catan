@@ -98,7 +98,6 @@ class Renderer():
             if resource_counts[i] > 0:
                 # TODO maybe add x scaling to fill from left, rather than have fixed places
                 self.card_sprites[i].draw()
-                # TODO draw number over card representing resource_counts[i]
                 x = self.card_sprites[i].x
                 y = self.card_sprites[i].y
                 width = self.card_sprites[i].width
@@ -127,7 +126,6 @@ class Renderer():
             label = pyglet.text.Label()
             # TODO maybe add x scaling to fill from left, rather than have fixed places
             self.bank_sprites[i].draw()
-            # TODO draw number over card representing resource_counts[i]
             x = self.bank_sprites[i].x
             y = self.bank_sprites[i].y
             width = self.bank_sprites[i].width
@@ -172,7 +170,6 @@ class Renderer():
         """render the roads on the screen.
            Also adds new road sprites if new roads have been placed"""
         roads = self.board.roads
-        curr_player = self.board.game_state.get_current_player()
         if len(roads) != len(self.road_sprites):
             # if there is a new road to create...
             new_roads = roads[len(self.road_sprites):]
@@ -184,6 +181,7 @@ class Renderer():
                 v1_y = v1.center[1]
                 v2_x = v2.center[0]
                 v2_y = v2.center[1]
+                curr_player = road.owner
                 self.road_sprites.append(pyglet.shapes.Line(v1_x, v1_y, v2_x, v2_y, thickness=10.0, color=curr_player.color.value))
 
         # render all roads in road_sprites
@@ -430,7 +428,6 @@ class Renderer():
             road_sprite.scale = scale*2
             self.player_info_sprites.append(road_sprite)
 
-            # TODO: get the longest road for each player
             label_background, label = self.label_from_sprite(road_sprite, str(len(player.dev_cards)))
 
             self.player_info_sprites.append(label_background)
@@ -586,7 +583,6 @@ class Renderer():
     def get_clickables(self):
         """return list of clickable elements on the board"""
         clickables = self.buttons
-        # TODO get all buttons from the renderer
         return clickables
     
     def get_vertex_buttons(self):

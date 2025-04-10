@@ -1,20 +1,26 @@
+"""Classes pertaining to managing what state the game is in."""
 from enum import Enum
 
 class TurnState(Enum):
+    """Represents which phase of the turn the GameState is currently in"""
     BEFORE_ROLL = "before_roll"
     AFTER_ROLL = "after_roll"
     BUILDING = "building"
     END_TURN = "end_turn"
 
 class GameState:
+    """Represents what state the game is currently in."""
     def __init__(self, players):
         self.players = players
         self.current_player_index = 0
-        self.state = TurnState.BEFORE_ROLL
+        self.state = TurnState.BUILDING
         self.tags = {'city': False,
                      'settlement': False,
                      'road': False,
-                     'road_v1': None}
+                     'road_v1': None,
+                     'settlements_placed_turn': 0,
+                     'settlements_placed': 0,
+                     'settlement_pos': -1}
         self.is_start = True
 
     def get_current_player(self):
@@ -42,6 +48,23 @@ class GameState:
             return True
         return False
 
+    def end_turn_start_phase(self):
+        """End a turn in the start phase.
+        Ends the start phase if every player has played 2 settlements.
+        Players take turns clockwise, then counterclockwise.
+        returns True if this was the player's second settlement"""
+        # reset tags
+        self.tags['settlements_placed_turn'] = 0
+        self.tags['settlement_pos'] = None
+        # if the settlements placed is more than the number of players return True
+        if self.tags['settlements_placed'] > len(self.players):
+            # move the turn counter backwards if this is the second time around
+            self.current_player_index = (self.current_player_index - 1) % len(self.players)
+            return True
+        # move the turn counter forwards if this is the first time around
+        self.current_player_index = (self.current_player_index + 1) % len(self.players)
+        return False
+
     def next_turn(self):
         """Cycle to the next player's turn."""
         self.current_player_index = (self.current_player_index + 1) % len(self.players)
@@ -52,11 +75,11 @@ class GameState:
         if self.state is TurnState.BUILDING:
             return True
         return False
-    
+
     def is_start_phase(self):
         """returns truthy if the game is in the setup/start phase"""
         return self.is_start
-    
+
     def end_start_phase(self):
         """transition from the start phase to the main game loop"""
         self.is_start = False

@@ -1,5 +1,4 @@
-from vertex import *
-
+"""Class representing a road as two vertices and an owner"""
 class Road:
     """
     owner: Player that placed the road

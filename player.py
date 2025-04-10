@@ -1,7 +1,7 @@
 """Class that represents a player in the Catan game"""
 import copy
 
-from texture_enums import Resource, Card
+from texture_enums import Resource
 
 class Player:
     """
@@ -10,7 +10,7 @@ class Player:
     resource_cards: list of resource cards
     dev_cards: list of development cards
     """
-    def __init__(self, player_id, color, isUser):
+    def __init__(self, player_id, color, is_user):
         self.player_id = player_id
         self.color = color
         self.resources = []
@@ -20,7 +20,7 @@ class Player:
         self.numCities = 4
         self.numSettlements = 5
         self.numKnights = 0
-        self.isUser = isUser
+        self.is_user = is_user
 
     def has_resources(self, resources: list[Resource]):
         """Returns true if the player has the resources in the quantities supplied"""
