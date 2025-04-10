@@ -661,7 +661,12 @@ class Renderer():
         state.tags['road'] = False
 
         # Call end turn start phase from gamestate
-        state.end_turn_start_phase()
+        previous_player = state.get_current_player()
+        second_settle = state.end_turn_start_phase()
+        if second_settle:
+            # give resources to previous player
+            resources = self.board.get_resources_from_vertex(state.tags['settlement_pos'])
+            self.board.add_resources(previous_player, resources)
 
     def ai_turn(self, player):
         state = self.board.game_state
