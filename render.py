@@ -13,7 +13,7 @@ from pyglet.gl import (
 import math
 
 from board import Board
-from board_config import TILE_ADJACENCY
+from board_config import TILE_ADJACENCY, BUILDING_COSTS, Building
 from texture_enums import Resource, Color
 from player import Player
 from button import Button
@@ -627,8 +627,13 @@ class Renderer():
         return valid_buttons
 
     def ai_start_turn(self, player):
+        state = self.board.game_state
         # Look for settle spot
-
+        state.tags['settlement'] = True
+        cost = BUILDING_COSTS[Building.settlement]
+        self.board.add_resources(state.get_current_player(), cost)
+        valid_spots = self.get_vertex_buttons()
+        state.tags['settlement'] = False
 
         # Look for road spot
 
