@@ -117,6 +117,10 @@ class Board:
         # Check if player has less than 15 roads
         if owner.numRoads == 0:
             return False
+        
+        # Check if the player can afford a road
+        if not owner.has_resources(BUILDING_COSTS[Building.road]):
+            return False
 
         # Bool indicating whether road is allowed
         allowed = False
@@ -162,9 +166,11 @@ class Board:
             else:
                 if vertex_index2 in VERTEX_ADJACENCY[road.vertex1]:
                     self.roads.append(Road(owner=owner, vertex1=vertex_index1, vertex2=vertex_index2))
+                    self.remove_resources(owner, BUILDING_COSTS[Building.road])
                     owner.numRoads -= 1
                     return True
         self.roads.append(Road(owner=owner, vertex1=vertex_index1, vertex2=vertex_index2))
+        self.remove_resources(owner, BUILDING_COSTS[Building.road])
         owner.numRoads -= 1
         return True
 
@@ -216,6 +222,9 @@ class Board:
     def is_valid_settle_spot(self, owner, vertex_index):
         """Is the given vertex_index a valid place for a settlement"""
         vertex = self.vertices[vertex_index]
+        # check if player can afford a settlement
+        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.settlement]):
+            return False
         # check if city or settlement is there already:
         if vertex.building != Building.none:
             return False
@@ -238,6 +247,9 @@ class Board:
     def is_valid_city_spot(self, player, vertex_index):
         """Is the given vertex_index a valid place for a city owned by the given player"""
         vertex = self.vertices[vertex_index]
+        # Check if player can afford a city
+        if not self.game_state.is_start_phase() and not player.has_resources(BUILDING_COSTS[Building.city]):
+            return False
         # Cities can only be placed on existing settlements owned by the player
         if vertex.building == Building.settlement and vertex.owner == player:
             return True
@@ -252,6 +264,10 @@ class Board:
         vertex2 = self.vertices[vertex_index2]
         # Check if player has less than 15 roads
         if owner.numRoads == 0:
+            return False
+        
+        # Check if player has enough to afford a road (in regular phase)
+        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.road]):
             return False
 
         # Bool indicating whether road is allowed
