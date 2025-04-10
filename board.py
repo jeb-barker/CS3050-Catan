@@ -341,15 +341,17 @@ class Board:
         self.die_roll = (die1, die2)
 
         # Iterate through tiles
-        for i in range(len(self.tiles)):
+        for i, tile in enumerate(self.tiles):
             # First: Check if tile's gen num matches most recent roll
             if self.tiles[i].gen_num == roll:
                 # new_resource_tiles.append(tile)
-                for vertex in TILE_ADJACENCY[i]:
+                for vertex_index in TILE_ADJACENCY[i]:
                     # Next check for players with settlements placed on its nearby vertices
+                    vertex = self.vertices[vertex_index]
                     if vertex.building != Building.none:
-                        # Distribute resources
-                        self.add_resources(vertex.owner, self.tiles[i].resource)
+                        # Distribute resources (if not a desert)
+                        if tile.resource is not Resource.desert:
+                            self.add_resources(vertex.owner, [tile.resource])
 
         # If roll == 7
         if roll == 7:
@@ -408,7 +410,8 @@ class Board:
         allowed = True
         for resource in resources:
             if Card(resource.value) in player.resources:
-                player.resources.remove(Card(resource.value))
+                res_index = player.resources.index(Card(resource.value))
+                player.resources.pop(res_index)
                 removed_resources.append(Card(resource.value))
             else:
                 allowed = False

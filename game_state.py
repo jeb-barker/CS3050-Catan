@@ -60,8 +60,11 @@ class GameState:
             self.is_start = False
             self.state = TurnState.BEFORE_ROLL
             return True
+        # if the number of settlements is the number of players, give the last player another turn.
+        if self.tags['settlements_placed'] == len(self.players):
+            return False
         # if the settlements placed is more than the number of players return True
-        if self.tags['settlements_placed'] > len(self.players):
+        elif self.tags['settlements_placed'] > len(self.players) - 1:
             # move the turn counter backwards if this is the second time around
             self.current_player_index = (self.current_player_index - 1) % len(self.players)
             return True
