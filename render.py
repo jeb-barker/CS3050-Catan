@@ -15,8 +15,7 @@ import random
 
 from board import Board
 from board_config import TILE_ADJACENCY, BUILDING_COSTS, Building
-from texture_enums import Resource, Color
-from player import Player
+from texture_enums import Resource
 from button import Button
 
 
