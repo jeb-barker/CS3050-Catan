@@ -370,7 +370,7 @@ class Board:
                     temp = random.randint(0, len(player.resources))
                     while temp in indices_to_discard:
                         temp += 1
-                        temp = temp % len(player.resources)
+                        temp = temp % (len(player.resources) - 1)
                     indices_to_discard.append(temp)
                 # Find what resources they are
                 resources_to_discard = []
