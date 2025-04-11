@@ -97,13 +97,14 @@ TILE_ADJACENCY = [
 ]
 
 class Building(Enum):
-    none = 0
-    settlement = 1
-    city = 2
-    road = 3
+    """Enum representing building types"""
+    NONE = 0
+    SETTLEMENT = 1
+    CITY = 2
+    ROAD = 3
 
 BUILDING_COSTS = {
-    Building.city : [Resource.wheat, Resource.wheat, Resource.ore, Resource.ore, Resource.ore,], # 2 wheat, 3 ore
-    Building.settlement : [Resource.wheat, Resource.brick, Resource.sheep, Resource.wood], # 1 wheat, 1 brick, 1 sheep, 1 wood
-    Building.road : [Resource.wood, Resource.brick] # 1 wood, 1 brick
+    Building.CITY : [Resource.wheat, Resource.wheat, Resource.ore, Resource.ore, Resource.ore,], # 2 wheat, 3 ore
+    Building.SETTLEMENT : [Resource.wheat, Resource.brick, Resource.sheep, Resource.wood], # 1 wheat, 1 brick, 1 sheep, 1 wood
+    Building.ROAD : [Resource.wood, Resource.brick] # 1 wood, 1 brick
 }

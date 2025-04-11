@@ -631,19 +631,19 @@ class Renderer():
         state = self.board.game_state
         # Look for settle spot
         state.tags['settlement'] = True
-        cost = BUILDING_COSTS[Building.settlement]
+        cost = BUILDING_COSTS[Building.SETTLEMENT]
         self.board.add_resources(state.get_current_player(), cost)
         valid_spots = list(self.get_vertex_buttons().keys())
 
         # Choose random index and build settlement there
         random.shuffle(valid_spots)
-        self.board.place_building(Building.settlement, player, valid_spots[0])
+        self.board.place_building(Building.SETTLEMENT, player, valid_spots[0])
         state.tags['settlement_pos'] = valid_spots[0]
         state.tags['settlement'] = False
 
         # Look for road spot
         state.tags['road'] = True
-        cost = BUILDING_COSTS[Building.road]
+        cost = BUILDING_COSTS[Building.ROAD]
         self.board.add_resources(player, cost)
         valid_spots = list(self.get_vertex_buttons().keys())
 
@@ -680,18 +680,18 @@ class Renderer():
 
         # Look for legal settle spots
         state.tags['settlement'] = True
-        cost = BUILDING_COSTS[Building.settlement]
+        cost = BUILDING_COSTS[Building.SETTLEMENT]
         valid_spots = list(self.get_vertex_buttons().keys())
 
         # Choose random index and build settlement there
         random.shuffle(valid_spots)
         if len(valid_spots) > 0:
-            self.board.place_building(Building.settlement, player, valid_spots[0])
+            self.board.place_building(Building.SETTLEMENT, player, valid_spots[0])
         state.tags['settlement'] = False
 
         # Look for legal road spots
         state.tags['road'] = True
-        cost = BUILDING_COSTS[Building.road]
+        cost = BUILDING_COSTS[Building.ROAD]
 
         valid_spots = list(self.get_vertex_buttons().keys())
 

@@ -80,16 +80,16 @@ def on_click(x, y, renderer):
                 case "vertex":
                     # vertex buttons can only be clicked if building tags are active
                     if state.tags['city']:
-                        renderer.board.place_building(Building.city, state.get_current_player(), vertex_index)
+                        renderer.board.place_building(Building.CITY, state.get_current_player(), vertex_index)
                         state.tags['city'] = False
                     elif state.tags['settlement']:
                         # if the state is in the start phase, 
                         # give the player the requisite resources to place a settlement
                         if state.is_start_phase():
-                            cost = BUILDING_COSTS[Building.settlement]
+                            cost = BUILDING_COSTS[Building.SETTLEMENT]
                             renderer.board.add_resources(state.get_current_player(), cost)
                             state.tags['settlement_pos'] = vertex_index
-                        renderer.board.place_building(Building.settlement, state.get_current_player(), vertex_index)
+                        renderer.board.place_building(Building.SETTLEMENT, state.get_current_player(), vertex_index)
                         state.tags['settlement'] = False
                     elif state.tags['road']:
                         # if the first point hasn't been assigned,
@@ -102,7 +102,7 @@ def on_click(x, y, renderer):
                             vertex1 = state.tags['road_v1']
                             if state.is_start_phase():
                                 # give the player the cost of the road if we're in the start phase
-                                cost = BUILDING_COSTS[Building.road]
+                                cost = BUILDING_COSTS[Building.ROAD]
                                 renderer.board.add_resources(state.get_current_player(), cost)
                             renderer.board.place_road(state.get_current_player(), vertex1, vertex_index)
                             state.tags['road_v1'] = None
