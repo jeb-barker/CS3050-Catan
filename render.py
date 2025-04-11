@@ -628,6 +628,7 @@ class Renderer():
         return valid_buttons
 
     def ai_start_turn(self, player):
+        """The current player takes a turn (during the start phase) automatically"""
         state = self.board.game_state
         # Look for settle spot
         state.tags['settlement'] = True
@@ -669,6 +670,7 @@ class Renderer():
             self.board.add_resources(previous_player, resources)
 
     def ai_turn(self, player):
+        """The current player takes a turn automatically"""
         state = self.board.game_state
         # Call start turn
         state.roll_dice()
