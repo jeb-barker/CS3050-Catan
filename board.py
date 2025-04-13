@@ -373,7 +373,7 @@ class Board:
                 indices_to_discard = []
                 # Choose random indices in player's hand to discard
                 for i in range(num_to_discard):
-                    temp = random.randint(0, len(player.resources))
+                    temp = random.randint(0, len(player.resources)-1) # rand int is inclusive...
                     while temp in indices_to_discard:
                         temp += 1
                         temp = temp % (len(player.resources) - 1)
