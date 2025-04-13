@@ -32,7 +32,7 @@ class Renderer():
     # ratio of card width to screen width
     CARD_SCALE = 0.06
     # ratio of dice width to screen width
-    DICE_SCALE = 0.05
+    DICE_SCALE = 0.025
 
     def __init__(self, window, board=None):
         self.window = window
@@ -203,8 +203,6 @@ class Renderer():
             road.draw()
                 
 
-
-
     def load_images(self):
         """Multithreaded image loading for all textures used in rendering"""
         self.image_names = [
@@ -295,13 +293,11 @@ class Renderer():
 
         self.card_sprites = []
 
-        # TODO the spacing and position needs work to actually look good
-        # what is here is mainly just something to get the imgs up on screen
-
         # just a little spacing to make things look more normal
         padding = card_width / 30
 
         for i, image in enumerate(card_imgs):
+            # TODO adjust offset based on index
             x = padding + card_width * i
             y = padding
             sprite = pyglet.sprite.Sprite(image, x=x, y=y)
@@ -325,9 +321,6 @@ class Renderer():
 
         self.bank_sprites = []
 
-        # TODO the spacing and position needs work to actually look good
-        # what is here is mainly just something to get the imgs up on screen
-
         # just a little spacing to make things look more normal
         padding = card_width / 30
 
@@ -345,19 +338,24 @@ class Renderer():
         dice_imgs = self.images[47:53]
 
         image_width = dice_imgs[0].width
+       
+        roll_button = self.buttons[1]
 
-        dice_width = self.DICE_SCALE * self.window.width / 2
+        dice_width = min(roll_button.width / 2, roll_button.height) * 0.8 
 
         scale = dice_width / image_width
 
-        width = self.buttons[1].width
-        x_1 = self.buttons[1].top_left[0]
-        y_1 = self.buttons[1].bottom_right[1]
+        x_pad = (roll_button.width - (dice_width * 2)) / 3
+        y_pad = (roll_button.height - dice_width) / 2
 
-        # TODO - make this dynamically sized
-        x_2 = self.buttons[1].top_left[0] + (width / 2)
-        y_2 = self.buttons[1].bottom_right[1]
+        x_1 = roll_button.top_left[0] + x_pad
+        y_1 = roll_button.bottom_right[1] + y_pad
 
+        x_2 = roll_button.top_left[0] + (roll_button.width + x_pad) / 2
+        y_2 = roll_button.bottom_right[1] + y_pad
+
+        print(dice_width)
+        print(roll_button.width, roll_button.height, roll_button.top_left, roll_button.bottom_right)
 
         self.dice_sprites = []
         for i in range(6):
