@@ -32,7 +32,8 @@ class Board:
 
         self.beginner_setup()
         self.die_roll = (1, 1)
-        self.robber_tile = None # add a robber_tile field to track where the robber is currently placed
+        # add a robber_tile field to track where the robber is currently placed
+        self.robber_tile = None
 
     def beginner_setup(self):
         """ Add 19 tiles to self.tiles
@@ -73,10 +74,13 @@ class Board:
 
         # Vertices left to right, top to bottom
         for i in range(19):
-            self.tiles.append(Tile(coords=tile_coords[i], gen_num=tile_gen_nums[i], resource=tile_resources[i]))
+            self.tiles.append(Tile(coords=tile_coords[i],
+                                   gen_num=tile_gen_nums[i],
+                                   resource=tile_resources[i]))
 
         # Set up the resource bank
-        for resource in [Resource.brick, Resource.ore, Resource.sheep, Resource.wheat, Resource.wood]:
+        for resource in [Resource.brick, Resource.ore,
+                         Resource.sheep, Resource.wheat, Resource.wood]:
             # Add 19 of each resource type to the board's bank
             self.resource_bank[resource] = [Card(resource.value) for _ in range(19)]
 
@@ -117,9 +121,9 @@ class Board:
         # Check if player has less than 15 roads
         if owner.numRoads == 0:
             return False
-        
+
         # Check if the player can afford a road
-        if not owner.has_resources(BUILDING_COSTS[Building.road]):
+        if not owner.has_resources(BUILDING_COSTS[Building.ROAD]):
             return False
 
         # Bool indicating whether road is allowed
@@ -128,9 +132,9 @@ class Board:
         # Check if player has a road or city or settlement there already
         # Check buildings first
         if vertex1.owner == owner or vertex2.owner == owner:
-            if vertex1.building == Building.city or vertex1.building == Building.SETTLEMENT:
+            if vertex1.building == Building.CITY or vertex1.building == Building.SETTLEMENT:
                 allowed = True
-            elif vertex2.building == Building.city or vertex2.building == Building.SETTLEMENT:
+            elif vertex2.building == Building.CITY or vertex2.building == Building.SETTLEMENT:
                 allowed = True
 
         # Check for adjacent roads
@@ -142,7 +146,7 @@ class Board:
                 elif road.vertex2 == vertex_index1 or road.vertex2 == vertex_index2:
                     allowed = True
                     break
-        
+
         # check if vertices are adjacent to each other:
         if vertex_index2 not in VERTEX_ADJACENCY[vertex_index1]:
             allowed = False
@@ -165,12 +169,14 @@ class Board:
                 return False
             else:
                 if vertex_index2 in VERTEX_ADJACENCY[road.vertex1]:
-                    self.roads.append(Road(owner=owner, vertex1=vertex_index1, vertex2=vertex_index2))
-                    self.remove_resources(owner, BUILDING_COSTS[Building.road])
+                    self.roads.append(Road(owner=owner,
+                                           vertex1=vertex_index1,
+                                           vertex2=vertex_index2))
+                    self.remove_resources(owner, BUILDING_COSTS[Building.ROAD])
                     owner.numRoads -= 1
                     return True
         self.roads.append(Road(owner=owner, vertex1=vertex_index1, vertex2=vertex_index2))
-        self.remove_resources(owner, BUILDING_COSTS[Building.road])
+        self.remove_resources(owner, BUILDING_COSTS[Building.ROAD])
         owner.numRoads -= 1
         return True
 
