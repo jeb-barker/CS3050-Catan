@@ -128,9 +128,9 @@ class Board:
         # Check if player has a road or city or settlement there already
         # Check buildings first
         if vertex1.owner == owner or vertex2.owner == owner:
-            if vertex1.building == Building.city or vertex1.building == Building.settlement:
+            if vertex1.building == Building.city or vertex1.building == Building.SETTLEMENT:
                 allowed = True
-            elif vertex2.building == Building.city or vertex2.building == Building.settlement:
+            elif vertex2.building == Building.city or vertex2.building == Building.SETTLEMENT:
                 allowed = True
 
         # Check for adjacent roads
@@ -188,7 +188,7 @@ class Board:
             return False
 
 
-        if building == Building.settlement:
+        if building == Building.SETTLEMENT:
             if owner.numSettlements == 0:
                 return False
 
