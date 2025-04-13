@@ -123,7 +123,7 @@ class Board:
             return False
 
         # Check if the player can afford a road
-        if not owner.has_resources(BUILDING_COSTS[Building.road]):
+        if not owner.has_resources(BUILDING_COSTS[Building.ROAD]):
             return False
 
         # Bool indicating whether road is allowed
@@ -132,9 +132,9 @@ class Board:
         # Check if player has a road or city or settlement there already
         # Check buildings first
         if vertex1.owner == owner or vertex2.owner == owner:
-            if vertex1.building == Building.city or vertex1.building == Building.SETTLEMENT:
+            if vertex1.building == Building.CITY or vertex1.building == Building.SETTLEMENT:
                 allowed = True
-            elif vertex2.building == Building.city or vertex2.building == Building.SETTLEMENT:
+            elif vertex2.building == Building.CITY or vertex2.building == Building.SETTLEMENT:
                 allowed = True
 
         # Check for adjacent roads
@@ -172,11 +172,11 @@ class Board:
                     self.roads.append(Road(owner=owner,
                                            vertex1=vertex_index1,
                                            vertex2=vertex_index2))
-                    self.remove_resources(owner, BUILDING_COSTS[Building.road])
+                    self.remove_resources(owner, BUILDING_COSTS[Building.ROAD])
                     owner.numRoads -= 1
                     return True
         self.roads.append(Road(owner=owner, vertex1=vertex_index1, vertex2=vertex_index2))
-        self.remove_resources(owner, BUILDING_COSTS[Building.road])
+        self.remove_resources(owner, BUILDING_COSTS[Building.ROAD])
         owner.numRoads -= 1
         return True
 
@@ -229,7 +229,7 @@ class Board:
         """Is the given vertex_index a valid place for a settlement"""
         vertex = self.vertices[vertex_index]
         # check if player can afford a settlement
-        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.settlement]):
+        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.SETTLEMENT]):
             return False
         # check if city or settlement is there already:
         if vertex.building != Building.NONE:
