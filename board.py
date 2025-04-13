@@ -178,7 +178,7 @@ class Board:
         """place building at the given vertex_index
            returns False if there's an error or the placement is invalid otherwise, returns True"""
         # Check that player has settlements left in pool
-        if building == Building.city:
+        if building == Building.CITY:
             if owner.numCities == 0:
                 return False
 
@@ -193,7 +193,7 @@ class Board:
                 return False
 
         vertex = self.vertices[vertex_index]
-        if building == Building.settlement:
+        if building == Building.SETTLEMENT:
             if self.is_valid_settle_spot(owner, vertex_index):
                 # case if placing a settlement or city
                 vertex.owner = owner
@@ -205,7 +205,7 @@ class Board:
                 self.game_state.tags['settlements_placed_turn'] += 1
                 self.game_state.tags['settlements_placed'] += 1
                 return True
-        elif building == Building.city:
+        elif building == Building.CITY:
             if self.is_valid_city_spot(owner, vertex_index):
                 vertex.owner = owner
                 vertex.building = building
@@ -223,14 +223,14 @@ class Board:
         """Is the given vertex_index a valid place for a settlement"""
         vertex = self.vertices[vertex_index]
         # check if player can afford a settlement
-        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.settlement]):
+        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.SETTLEMENT]):
             return False
         # check if city or settlement is there already:
-        if vertex.building != Building.none:
+        if vertex.building != Building.NONE:
             return False
         # check if city or settlement is one vertex away (see catan rules for more info)
         for neighbor_vertex_index in VERTEX_ADJACENCY[vertex_index]:
-            if self.vertices[neighbor_vertex_index].building != Building.none:
+            if self.vertices[neighbor_vertex_index].building != Building.NONE:
                 return False
 
         # If we are in the start phase, these checks are sufficient
@@ -248,10 +248,10 @@ class Board:
         """Is the given vertex_index a valid place for a city owned by the given player"""
         vertex = self.vertices[vertex_index]
         # Check if player can afford a city
-        if not self.game_state.is_start_phase() and not player.has_resources(BUILDING_COSTS[Building.city]):
+        if not self.game_state.is_start_phase() and not player.has_resources(BUILDING_COSTS[Building.CITY]):
             return False
         # Cities can only be placed on existing settlements owned by the player
-        if vertex.building == Building.settlement and vertex.owner == player:
+        if vertex.building == Building.SETTLEMENT and vertex.owner == player:
             return True
         return False
 
@@ -267,7 +267,7 @@ class Board:
             return False
         
         # Check if player has enough to afford a road (in regular phase)
-        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.road]):
+        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.ROAD]):
             return False
 
         # Bool indicating whether road is allowed
@@ -276,9 +276,9 @@ class Board:
         # Check if player has a road or city or settlement there already
         # Check buildings first
         if vertex1.owner == owner or vertex2.owner == owner:
-            if vertex1.building == Building.city or vertex1.building == Building.settlement:
+            if vertex1.building == Building.CITY or vertex1.building == Building.SETTLEMENT:
                 allowed = True
-            elif vertex2.building == Building.city or vertex2.building == Building.settlement:
+            elif vertex2.building == Building.CITY or vertex2.building == Building.SETTLEMENT:
                 allowed = True
 
         # Check for adjacent roads
@@ -348,7 +348,7 @@ class Board:
                 for vertex_index in TILE_ADJACENCY[i]:
                     # Next check for players with settlements placed on its nearby vertices
                     vertex = self.vertices[vertex_index]
-                    if vertex.building != Building.none:
+                    if vertex.building != Building.NONE:
                         # Distribute resources (if not a desert)
                         if tile.resource is not Resource.desert:
                             self.add_resources(vertex.owner, [tile.resource])
