@@ -43,6 +43,7 @@ class Renderer():
         if board is None:
             self.board = Board()
 
+
         self.load_images()
         self.tiles_batch = pyglet.graphics.Batch()
         self.gen_num_batch = pyglet.graphics.Batch()
@@ -50,6 +51,8 @@ class Renderer():
         self.load_card_sprites()
         self.load_bank_sprites()
         self.load_player_info(self.window.width*.85, self.window.height*.40)
+
+        self.load_building_sprites()
 
         self.buttons = []
         self.vertex_buttons = {index:None for index in range(54)}
@@ -64,8 +67,12 @@ class Renderer():
     def update(self):
         """Function to update the screen"""
         # clear screen
-        glClearColor(0.7, 0.8, 1.0, 1.0)
+        glClearColor(0.55, 0.45, 0.33, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
+
+        # draw background
+#        self.background_sprite.draw()
+
         # enable blending
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -437,6 +444,9 @@ class Renderer():
 
             self.player_info_sprites.append(label_background)
             self.player_info_sprites.append(label)
+
+    def load_building_sprites(self):
+        self.building_sprites = []
 
     def label_from_sprite(self, sprite, text):
         """returns a background box and label in the upper right corner of the given sprite"""
