@@ -53,7 +53,7 @@ class Renderer():
 
         self.buttons = []
         self.vertex_buttons = {index:None for index in range(54)}
-        self.init_buttons()
+        self.load_buttons()
 
         self.dice_sprites = []
         self.load_dice_sprites()
@@ -84,32 +84,35 @@ class Renderer():
         self.draw_roads()
 
 
-
-
     def draw_player_cards(self, player_id):
         """Draw resource, development, and victory point cards in a player's hand""" 
-        resources = self.board.players[player_id].resources
+        player = self.board.players[player_id]
         # integer quantity of each of the five resources in the resource list
-        resource_counts = [0 for _ in range(5)]
-        for resource in resources:
-            resource_counts[resource.value] += 1
+        card_counts = [0 for _ in range(14)]
+        for resource in player.resources:
+            card_counts[resource.value] += 1
 
-        for i in range(5):
-            if resource_counts[i] > 0:
+        for card in player.dev_cards:
+            card_counts[card.value] += 1
+
+        for i in range(14):
+            if card_counts[i] > 0:
                 # TODO maybe add x scaling to fill from left, rather than have fixed places
+                if i >= 5:
+                    continue
                 self.card_sprites[i].draw()
                 # TODO draw number over card representing resource_counts[i]
                 x = self.card_sprites[i].x
                 y = self.card_sprites[i].y
                 width = self.card_sprites[i].width
                 height = self.card_sprites[i].height
-                label = pyglet.text.Label(str(resource_counts[i]),
+                label = pyglet.text.Label(str(card_counts[i]),
                           font_name='Times New Roman',
                           font_size=40,
-        #                  weight=5,
                           x=x+(width*.75), y=y+(height*.85),
                           anchor_x='center', anchor_y='center')
                 label.draw()
+
 
 
         # TODO draw development cards
@@ -241,8 +244,8 @@ class Renderer():
             "assets/palace.png",
             "assets/palace.png", # longest_road place holder
             "assets/palace.png", # largest army place holder
-            "assets/palace.png", # place holder for resource card back
-            "assets/palace.png", # Dev card back place holder
+            "assets/resource_back.png", 
+            "assets/development_back.png", 
             "assets/dice1.png", # 47
             "assets/dice2.png",
             "assets/dice3.png",
@@ -361,9 +364,11 @@ class Renderer():
     def load_player_info(self, x, y):
         """Load/position images used to display every player's data on the side of the screen.
            x, y are the top-left coordinates where the data should be displayed on screen."""
-        imgs = self.images[34]
+        knight_img = self.images[34]
+        resource_card_back_img = self.images[45]
+        dev_card_back_img = self.images[46]
         card_width = (self.CARD_SCALE * self.window.width / 2) / 2 # looks more natural
-        image_width = imgs.width
+        image_width = knight_img.width
         scale = card_width / image_width
         padding = card_width / 30
 
@@ -387,8 +392,7 @@ class Renderer():
 
             # position the graphic that shows the card icon
             x_pos = x + card_width + padding*3 # add extra padding
-            # TODO - Jeb: use a different image
-            card_sprite = pyglet.sprite.Sprite(imgs, x=x_pos, y=y_pos)
+            card_sprite = pyglet.sprite.Sprite(resource_card_back_img, x=x_pos, y=y_pos)
             card_sprite.scale = scale*2
             self.player_info_sprites.append(card_sprite)
             label_background, label = self.label_from_sprite(card_sprite, str(len(player.resources)))
@@ -398,8 +402,7 @@ class Renderer():
 
             # position the graphic that shows the dev card count
             x_pos = x + (card_width*3) + padding*6
-            # TODO - Jeb: use a different image
-            dev_card_sprite = pyglet.sprite.Sprite(imgs, x=x_pos, y=y_pos)
+            dev_card_sprite = pyglet.sprite.Sprite(dev_card_back_img, x=x_pos, y=y_pos)
             dev_card_sprite.scale = scale*2
             self.player_info_sprites.append(dev_card_sprite)
 
@@ -411,8 +414,7 @@ class Renderer():
             # position the graphic that shows the knight count
             x_pos = x + (card_width*5) + padding*9
 
-            # TODO - Jeb: use a different image
-            knight_sprite = pyglet.sprite.Sprite(imgs, x=x_pos, y=y_pos)
+            knight_sprite = pyglet.sprite.Sprite(knight_img, x=x_pos, y=y_pos)
             knight_sprite.scale = scale*2
             self.player_info_sprites.append(knight_sprite)
 
@@ -426,7 +428,7 @@ class Renderer():
             x_pos = x + (card_width*7) + padding*12
 
             # TODO - Jeb: use a different image
-            road_sprite = pyglet.sprite.Sprite(imgs, x=x_pos, y=y_pos)
+            road_sprite = pyglet.sprite.Sprite(knight_img, x=x_pos, y=y_pos)
             road_sprite.scale = scale*2
             self.player_info_sprites.append(road_sprite)
 
@@ -456,8 +458,8 @@ class Renderer():
 
         return label_background, label
 
-    def init_buttons(self):
-        """Initialize buttons. placeholder for now."""
+    def load_buttons(self):
+        """Load button objects"""
         self.buttons.append(Button(False, (self.window.width/2 + 60, 100), width=50, height=50, button_name="run_ai_turn"))
         self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, button_name="roll_dice"))
         self.buttons.append(Button(False, (self.window.width/2, self.window.height/8), width=50, height=50, button_name="build_settlement"))
