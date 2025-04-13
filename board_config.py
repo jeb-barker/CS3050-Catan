@@ -1,3 +1,4 @@
+"""configuration class containing helpful enums and global variables for the board"""
 from enum import Enum
 from texture_enums import Resource
 
