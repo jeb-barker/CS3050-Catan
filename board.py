@@ -32,7 +32,8 @@ class Board:
 
         self.beginner_setup()
         self.die_roll = (1, 1)
-        self.robber_tile = None # add a robber_tile field to track where the robber is currently placed
+        # add a robber_tile field to track where the robber is currently placed
+        self.robber_tile = None
 
     def beginner_setup(self):
         """ Add 19 tiles to self.tiles
@@ -73,10 +74,13 @@ class Board:
 
         # Vertices left to right, top to bottom
         for i in range(19):
-            self.tiles.append(Tile(coords=tile_coords[i], gen_num=tile_gen_nums[i], resource=tile_resources[i]))
+            self.tiles.append(Tile(coords=tile_coords[i],
+                                   gen_num=tile_gen_nums[i],
+                                   resource=tile_resources[i]))
 
         # Set up the resource bank
-        for resource in [Resource.brick, Resource.ore, Resource.sheep, Resource.wheat, Resource.wood]:
+        for resource in [Resource.brick, Resource.ore,
+                         Resource.sheep, Resource.wheat, Resource.wood]:
             # Add 19 of each resource type to the board's bank
             self.resource_bank[resource] = [Card(resource.value) for _ in range(19)]
 
@@ -117,7 +121,7 @@ class Board:
         # Check if player has less than 15 roads
         if owner.numRoads == 0:
             return False
-        
+
         # Check if the player can afford a road
         if not owner.has_resources(BUILDING_COSTS[Building.road]):
             return False
@@ -142,7 +146,7 @@ class Board:
                 elif road.vertex2 == vertex_index1 or road.vertex2 == vertex_index2:
                     allowed = True
                     break
-        
+
         # check if vertices are adjacent to each other:
         if vertex_index2 not in VERTEX_ADJACENCY[vertex_index1]:
             allowed = False
@@ -165,7 +169,9 @@ class Board:
                 return False
             else:
                 if vertex_index2 in VERTEX_ADJACENCY[road.vertex1]:
-                    self.roads.append(Road(owner=owner, vertex1=vertex_index1, vertex2=vertex_index2))
+                    self.roads.append(Road(owner=owner,
+                                           vertex1=vertex_index1,
+                                           vertex2=vertex_index2))
                     self.remove_resources(owner, BUILDING_COSTS[Building.road])
                     owner.numRoads -= 1
                     return True
@@ -223,7 +229,7 @@ class Board:
         """Is the given vertex_index a valid place for a settlement"""
         vertex = self.vertices[vertex_index]
         # check if player can afford a settlement
-        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.SETTLEMENT]):
+        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.settlement]):
             return False
         # check if city or settlement is there already:
         if vertex.building != Building.NONE:
