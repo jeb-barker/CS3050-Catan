@@ -52,6 +52,8 @@ class Renderer():
         self.load_bank_sprites()
         self.load_player_info(self.window.width*.85, self.window.height*.40)
 
+        self.load_background()
+
         self.load_building_sprites()
 
         self.buttons = []
@@ -71,7 +73,7 @@ class Renderer():
         glClear(GL_COLOR_BUFFER_BIT)
 
         # draw background
-#        self.background_sprite.draw()
+        self.background_sprite.draw()
 
         # enable blending
         glEnable(GL_BLEND)
@@ -258,7 +260,8 @@ class Renderer():
             "assets/dice3.png",
             "assets/dice4.png",
             "assets/dice5.png",
-            "assets/dice6.png"
+            "assets/dice6.png",
+            "assets/woodgrain.png", # 53
         ]
         image_count = len(self.image_names)
         self.images = [None for _ in range(image_count)]
@@ -594,6 +597,12 @@ class Renderer():
                     batch=self.gen_num_batch, x=x, y=y)
                 gen_num_sprite.scale = gen_num_scale
                 self.gen_num_sprites.append(gen_num_sprite)
+    
+
+    def load_background(self):
+        background_img = self.images[53]
+        self.background_sprite = pyglet.sprite.Sprite(background_img, x=0, y=0)
+        self.background_sprite.scale = self.window.height / background_img.height
 
     def get_clickables(self):
         """return list of clickable elements on the board"""
