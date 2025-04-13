@@ -354,9 +354,6 @@ class Renderer():
         x_2 = roll_button.top_left[0] + (roll_button.width + x_pad) / 2
         y_2 = roll_button.bottom_right[1] + y_pad
 
-        print(dice_width)
-        print(roll_button.width, roll_button.height, roll_button.top_left, roll_button.bottom_right)
-
         self.dice_sprites = []
         for i in range(6):
             sprite = pyglet.sprite.Sprite(dice_imgs[i], x=x_1, y=y_1)
