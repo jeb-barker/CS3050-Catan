@@ -73,10 +73,10 @@ def on_click(x, y, renderer):
                 case _:
                     pass
 
-    vertex_buttons = renderer.get_vertex_buttons()
-    for vertex_index in vertex_buttons:
-        if vertex_buttons[vertex_index].contains((x,y)):
-            match vertex_buttons[vertex_index].button_name:
+    for vertex_index in renderer.board.get_clickable_vertices():
+        button = renderer.vertex_buttons[vertex_index]
+        if button.contains((x,y)):
+            match button.button_name:
                 case "vertex":
                     # vertex buttons can only be clicked if building tags are active
                     if state.tags['city']:

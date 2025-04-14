@@ -57,7 +57,6 @@ class Renderer():
         self.load_building_sprites()
 
         self.buttons = []
-        self.vertex_buttons = {index:None for index in range(54)}
         self.load_buttons()
 
         self.dice_sprites = []
@@ -161,16 +160,16 @@ class Renderer():
                 self.player_info_sprites[(p_num * 14) + 4].text = str(len(player.resources))
                 self.player_info_sprites[(p_num * 14) + 7].text = str(len(player.dev_cards))
                 self.player_info_sprites[(p_num * 14) + 10].text = str("-1")
-                self.player_info_sprites[(p_num * 14) + 13].text = str(self.board.calculate_player_longest_road(player))
+                longest_road = str(self.board.calculate_player_longest_road(player))
+                self.player_info_sprites[(p_num * 14) + 13].text = longest_road 
             sprite.draw()
 
     def draw_buttons(self):
         """draw each button on the screen"""
         for button in self.buttons:
             button.draw()
-        for button in self.get_vertex_buttons():
-            if self.vertex_buttons[button] is not None:
-                self.vertex_buttons[button].draw()
+        for button in self.board.get_clickable_vertices():
+            self.vertex_buttons[button].draw()
 
     def draw_dice(self):
         """draw the current value of the dice roll on screen"""
@@ -468,12 +467,19 @@ class Renderer():
 
     def load_buttons(self):
         """Load button objects"""
-        self.buttons.append(Button(False, (self.window.width/2 + 60, 100), width=50, height=50, button_name="run_ai_turn"))
+        self.buttons.append(
+            Button(False, (self.window.width/2 + 60, 100), width=50, height=50, button_name="run_ai_turn"))
         self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, button_name="roll_dice"))
         self.buttons.append(Button(False, (self.window.width/2, self.window.height/8), width=50, height=50, button_name="build_settlement"))
         self.buttons.append(Button(False, (self.window.width/2 + 60, self.window.height/8), width=50, height=50, button_name="build_city"))
         self.buttons.append(Button(False, (self.window.width / 2, 100), width=50, height=50, button_name="end_turn"))
         self.buttons.append(Button(False, (self.window.width/2 + 120, self.window.height/8), width=50, height=50, button_name="build_road"))
+
+        #width = self.window.width
+        #height = window.height * 0.1
+        #end_turn_button = Button(False, (x, y), width=width, height=height, button_name="end_turn")
+        
+        self.vertex_buttons = [None for _ in range(54)]
 
         # initialize vertex buttons:
         for index, tile_sprite in enumerate(self.tile_sprites):
@@ -605,126 +611,3 @@ class Renderer():
         # TODO get all buttons from the renderer
         return clickables
     
-    def get_vertex_buttons(self):
-        """returns the dictionary containing the vertex buttons that are active in the current game state"""
-        # Vertex buttons are only shown after the build buttons are pressed:
-        state = self.board.game_state
-        valid_buttons = {}
-        if state.tags['settlement']:
-            # show valid places to place a settlement
-            for vertex_index in self.vertex_buttons:
-                if vertex_index is not None:
-                    if self.board.is_valid_settle_spot(state.get_current_player(), vertex_index):
-                        # only add valid settle spots
-                        valid_buttons[vertex_index] = self.vertex_buttons[vertex_index]
-        elif state.tags['city']:
-            # show valid places to place a city
-            for vertex_index in self.vertex_buttons:
-                if vertex_index is not None:
-                    if self.board.is_valid_city_spot(state.get_current_player(), vertex_index):
-                        # only add valid city spots
-                        valid_buttons[vertex_index] = self.vertex_buttons[vertex_index]
-        elif state.tags['road']:
-            if state.tags['road_v1'] is None:
-                # show valid places to start a road
-                for vertex_index in self.vertex_buttons:
-                    if vertex_index is not None:
-                        for vertex_neighbor_index in self.vertex_buttons:
-                            if self.board.is_valid_road_spot(state.get_current_player(), vertex_index, vertex_neighbor_index):
-                                # only add valid road starts
-                                valid_buttons[vertex_index] = self.vertex_buttons[vertex_index]
-            else:
-                # show valid places to end a road
-                for vertex_index in self.vertex_buttons:
-                    if vertex_index is not None:
-                        if self.board.is_valid_road_spot(state.get_current_player(), state.tags['road_v1'], vertex_index):
-                            # only add valid road ends
-                            valid_buttons[vertex_index] = self.vertex_buttons[vertex_index]
-        return valid_buttons
-
-    def ai_start_turn(self, player):
-        """The current player takes a turn (during the start phase) automatically"""
-        state = self.board.game_state
-        # Look for settle spot
-        state.tags['settlement'] = True
-        cost = BUILDING_COSTS[Building.SETTLEMENT]
-        self.board.add_resources(state.get_current_player(), cost)
-        valid_spots = list(self.get_vertex_buttons().keys())
-
-        # Choose random index and build settlement there
-        random.shuffle(valid_spots)
-        self.board.place_building(Building.SETTLEMENT, player, valid_spots[0])
-        state.tags['settlement_pos'] = valid_spots[0]
-        state.tags['settlement'] = False
-
-        # Look for road spot
-        state.tags['road'] = True
-        cost = BUILDING_COSTS[Building.ROAD]
-        self.board.add_resources(player, cost)
-        valid_spots = list(self.get_vertex_buttons().keys())
-
-        # Choose a random index and place first road vertex there
-        random.shuffle(valid_spots)
-        v1 = valid_spots[0]
-        state.tags['road_v1'] = v1
-
-        # Choose the second vertex
-        valid_spots = list(self.get_vertex_buttons().keys())
-        random.shuffle(valid_spots)
-        v2 = valid_spots[0]
-        self.board.place_road(player, v1, v2)
-        state.tags['road_v1'] = None
-        state.tags['road'] = False
-
-        # Call end turn start phase from gamestate
-        previous_player = state.get_current_player()
-        second_settle = state.end_turn_start_phase()
-        if second_settle:
-            # give resources to previous player
-            resources = self.board.get_resources_from_vertex(state.tags['settlement_pos'])
-            self.board.add_resources(previous_player, resources)
-
-    def ai_turn(self, player):
-        """The current player takes a turn automatically"""
-        state = self.board.game_state
-        # Call start turn
-        state.roll_dice()
-        self.board.start_turn(player)
-
-        # move the game_state
-        state.start_building_phase()
-
-        # Look for legal settle spots
-        state.tags['settlement'] = True
-        cost = BUILDING_COSTS[Building.SETTLEMENT]
-        valid_spots = list(self.get_vertex_buttons().keys())
-
-        # Choose random index and build settlement there
-        random.shuffle(valid_spots)
-        if len(valid_spots) > 0:
-            self.board.place_building(Building.SETTLEMENT, player, valid_spots[0])
-        state.tags['settlement'] = False
-
-        # Look for legal road spots
-        state.tags['road'] = True
-        cost = BUILDING_COSTS[Building.ROAD]
-
-        valid_spots = list(self.get_vertex_buttons().keys())
-
-        # Choose a random index and place first road vertex there
-        random.shuffle(valid_spots)
-        if len(valid_spots) > 0:
-            v1 = valid_spots[0]
-            state.tags['road_v1'] = v1
-
-            # Choose the second vertex
-            valid_spots = list(self.get_vertex_buttons().keys())
-            random.shuffle(valid_spots)
-            v2 = valid_spots[0]
-            self.board.place_road(player, v1, v2)
-            state.tags['road_v1'] = None
-
-        state.tags['road'] = False
-
-        # End turn
-        state.end_turn()

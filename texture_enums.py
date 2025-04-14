@@ -35,8 +35,9 @@ class Resource(Enum):
     desert = 5
 
 class Color(Enum):
-    red = (255, 0, 0)
-    green = (0, 255, 0)
-    blue = (0, 0, 255)
+    red = (176, 51, 47)
+    green = (63, 101, 33)
+    blue = (52, 92, 143)
     black = (0, 0, 0)
     white = (255, 255, 255)
+    grey = (128, 128, 128)
