@@ -15,7 +15,7 @@ import random
 
 from board import Board
 from board_config import TILE_ADJACENCY, BUILDING_COSTS, Building
-from texture_enums import Resource
+from texture_enums import Resource, Card
 from button import Button
 
 
@@ -42,7 +42,10 @@ class Renderer():
 
         if board is None:
             self.board = Board()
+        else:
+            self.board = board
 
+        self.board.players[0].dev_cards = [Card.knight, Card.knight, Card.knight, Card.monopoly]
 
         self.load_images()
         self.tiles_batch = pyglet.graphics.Batch()
@@ -82,7 +85,7 @@ class Renderer():
         self.tiles_batch.draw()
         # draw gen nums
         self.gen_num_batch.draw()
-        # draw the cards in player 0's hand
+        # draw the cards in player 0's hand #TODO render the actual current player's stuff
         self.draw_player_cards(0)
         # draw the bank
         self.draw_bank_cards()
@@ -107,10 +110,14 @@ class Renderer():
 
         for i in range(14):
             if card_counts[i] > 0:
-                # TODO maybe add x scaling to fill from left, rather than have fixed places
-                if i >= 5:
-                    continue
-                self.card_sprites[i].draw()
+                limit = min(card_counts[i], 5)
+                offset = self.card_sprites[i].width / 28
+                self.card_sprites[i].x += limit * offset
+                self.card_sprites[i].y += limit * offset
+                for _ in range(limit):    
+                    self.card_sprites[i].x -= offset
+                    self.card_sprites[i].y -= offset
+                    self.card_sprites[i].draw()
                 # TODO draw number over card representing resource_counts[i]
                 x = self.card_sprites[i].x
                 y = self.card_sprites[i].y
@@ -308,11 +315,11 @@ class Renderer():
 
         # assume all card images are the same size
         image_width = card_imgs[0].width
-        #image_height = resource_imgs[0].height
+        image_height = card_imgs[0].height
 
         # hexagon tile dimensions
         card_width = self.CARD_SCALE * self.window.width
-        #card_height = (image_height / image_width) * card_width
+        card_height = (image_height / image_width) * card_width
 
         # factor to scale tile images by
         scale = card_width / image_width
@@ -321,11 +328,17 @@ class Renderer():
 
         # just a little spacing to make things look more normal
         padding = card_width / 30
-
+        x_offset = 0
+        y_offset = 0
         for i, image in enumerate(card_imgs):
             # TODO adjust offset based on index
-            x = padding + card_width * i
-            y = padding
+            if ((i + 1) % 5 == 0):
+                x_offset = 0
+                y_offset += card_height
+
+            x = padding + x_offset
+            y = padding + y_offset
+            x_offset += card_width
             sprite = pyglet.sprite.Sprite(image, x=x, y=y)
             sprite.scale = scale
             self.card_sprites.append(sprite)
@@ -495,16 +508,24 @@ class Renderer():
     def load_buttons(self):
         """Load button objects"""
         self.buttons.append(
-            Button(False, (self.window.width/2 + 60, 100), width=50, height=50, button_name="run_ai_turn"))
+            Button(False, (self.window.width/2 - 200, 100), width=50, height=50, button_name="run_ai_turn"))
         self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, button_name="roll_dice"))
         self.buttons.append(Button(False, (self.window.width/2, self.window.height/8), width=50, height=50, button_name="build_settlement"))
         self.buttons.append(Button(False, (self.window.width/2 + 60, self.window.height/8), width=50, height=50, button_name="build_city"))
         self.buttons.append(Button(False, (self.window.width / 2, 100), width=50, height=50, button_name="end_turn"))
         self.buttons.append(Button(False, (self.window.width/2 + 120, self.window.height/8), width=50, height=50, button_name="build_road"))
 
-        #width = self.window.width
-        #height = window.height * 0.1
-        #end_turn_button = Button(False, (x, y), width=width, height=height, button_name="end_turn")
+        width = self.window.width
+        height = self.window.height * 0.1
+        x = 0
+        y = 0 
+        #end_turn_label = Label(
+        end_turn_button = Button(
+            center=(x, y), 
+            width=width, 
+            height=height, 
+            button_name="end_turn",
+            button_label="End Turn")
         
         self.vertex_buttons = [None for _ in range(54)]
 
