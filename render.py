@@ -382,7 +382,7 @@ class Renderer():
 
         image_width = dice_imgs[0].width
 
-        roll_button = self.buttons[1]
+        roll_button = self.buttons[2]
 
         dice_width = min(roll_button.width / 2, roll_button.height) * 0.8
 
