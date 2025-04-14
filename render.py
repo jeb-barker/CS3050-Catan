@@ -536,6 +536,7 @@ class Renderer():
             button_name="end_turn",
             button_label="End Turn")
         
+        self.buttons.append(
             Button(False,
                    (self.window.width/2 + 60, 100),
                    width=50, height=50, button_name="run_ai_turn"))
