@@ -540,10 +540,12 @@ class Board:
         self.add_resources(state.get_current_player(), cost)
         valid_spots = self.get_clickable_vertices() 
 
-        # Choose random index and build settlement there
-        random.shuffle(valid_spots)
-        self.place_building(Building.SETTLEMENT, player, valid_spots[0])
-        state.tags['settlement_pos'] = valid_spots[0]
+        # in this case there should always be valid spots, but this avoids exception
+        if valid_spots:
+            # Choose random index and build settlement there
+            random.shuffle(valid_spots)
+            self.place_building(Building.SETTLEMENT, player, valid_spots[0])
+            state.tags['settlement_pos'] = valid_spots[0]
         state.tags['settlement'] = False
 
         # Look for road spot
@@ -553,15 +555,17 @@ class Board:
         valid_spots = self.get_clickable_vertices()
 
         # Choose a random index and place first road vertex there
-        random.shuffle(valid_spots)
-        v1 = valid_spots[0]
-        state.tags['road_v1'] = v1
+        if valid_spots:
+            random.shuffle(valid_spots)
+            v1 = valid_spots[0]
+            state.tags['road_v1'] = v1
 
         # Choose the second vertex
         valid_spots = self.get_clickable_vertices()
-        random.shuffle(valid_spots)
-        v2 = valid_spots[0]
-        self.place_road(player, v1, v2)
+        if valid_spots:
+            random.shuffle(valid_spots)
+            v2 = valid_spots[0]
+            self.place_road(player, v1, v2)
         state.tags['road_v1'] = None
         state.tags['road'] = False
 

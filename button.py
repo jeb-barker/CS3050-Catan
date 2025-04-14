@@ -7,7 +7,7 @@ class Button:
     """
     Class to represent a button with either a point-radius (circle) or a bounding box (rectangle)
     """
-    def __init__(self, is_circle: bool, center: tuple[int,int], button_sprite=None, radius=0, width=0, height=0, button_name=-1, button_label=None):
+    def __init__(self, is_circle: bool=False, center: tuple[int,int]=(0,0), button_sprite=None, radius=0, width=0, height=0, button_name=-1, button_label=None):
         self.button_name = button_name
         self.is_circle = is_circle
         self.center = center
@@ -49,6 +49,6 @@ class Button:
 
     def draw(self):
         """Draw the internal rectangle"""
+        self.button_sprite.draw()
         if self.button_label:
             self.button_label.draw()
-        self.button_sprite.draw()

@@ -219,7 +219,7 @@ class Renderer():
                 added = False
                 vertex_button = self.vertex_buttons[vertex_index]
                 x_pos = vertex_button.center[0] - (vertex_button.radius) # center the building
-                y_pos = vertex_button.center[1]
+                y_pos = vertex_button.center[1] - vertex_button.radius
                 size = vertex_button.radius * 2
                 sprite = pyglet.shapes.Rectangle(x_pos, y_pos, size, size, color=(0,0,0))
                 if vertex.building is Building.SETTLEMENT:
@@ -523,17 +523,20 @@ class Renderer():
 
     def load_buttons(self):
         """Load button objects"""
-        width = self.window.width
-        height = self.window.height * 0.1
-        x = 0
-        y = 0 
-        #end_turn_label = Label(
+        pad = self.window.height * 0.005
+
+        width = self.window.width * 0.15 - pad
+        height = self.window.height * 0.120 - pad
+        x = self.window.width - width / 2 - pad;
+        y = height / 2 + pad
+        end_turn_label = pyglet.text.Label("End Turn", font_size = 50,
+            x=x, y=y, anchor_x='center', anchor_y='center')
         end_turn_button = Button(
             center=(x, y), 
             width=width, 
             height=height, 
             button_name="end_turn",
-            button_label="End Turn")
+            button_label=end_turn_label)
         
         self.buttons.append(
             Button(False,
@@ -551,10 +554,7 @@ class Renderer():
             Button(False,
                    (self.window.width/2 + 60, self.window.height/8),
                    width=50, height=50, button_name="build_city"))
-        self.buttons.append(
-            Button(False,
-                   (self.window.width / 2, 100),
-                   width=50, height=50, button_name="end_turn"))
+        self.buttons.append(end_turn_button)
         self.buttons.append(
             Button(False,
                    (self.window.width/2 + 120, self.window.height/8),
