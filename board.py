@@ -239,8 +239,10 @@ class Board:
             if self.vertices[neighbor_vertex_index].building != Building.NONE:
                 return False
 
-        # If we are in the start phase, these checks are sufficient
+        # If we are in the start phase, we can't place more than one settlement per turn
         if self.game_state.is_start_phase():
+            if self.game_state.tags['settlemets_placed_turn'] >= 1:
+                return False
             return True
         # If we are in the main phase of the game, 
         # Look for a road that starts/stops on the given vertex
