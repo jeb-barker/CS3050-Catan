@@ -241,7 +241,7 @@ class Board:
 
         # If we are in the start phase, we can't place more than one settlement per turn
         if self.game_state.is_start_phase():
-            if self.game_state.tags['settlemets_placed_turn'] >= 1:
+            if self.game_state.tags['settlements_placed_turn'] >= 1:
                 return False
             return True
         # If we are in the main phase of the game, 
