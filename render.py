@@ -5,13 +5,14 @@ Texture loading, positioning and scaling
 
 from threading import Thread
 
+import math
+import random
 import pyglet
 from pyglet.gl import (
     glClearColor, glClear, glEnable, glBlendFunc,
     GL_BLEND, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_COLOR_BUFFER_BIT
 )
-import math
-import random
+
 
 from board import Board
 from board_config import TILE_ADJACENCY, BUILDING_COSTS, Building
@@ -107,11 +108,9 @@ class Renderer():
 
         for i in range(14):
             if card_counts[i] > 0:
-                # TODO maybe add x scaling to fill from left, rather than have fixed places
                 if i >= 5:
                     continue
                 self.card_sprites[i].draw()
-                # TODO draw number over card representing resource_counts[i]
                 x = self.card_sprites[i].x
                 y = self.card_sprites[i].y
                 width = self.card_sprites[i].width
@@ -123,11 +122,6 @@ class Renderer():
                           anchor_x='center', anchor_y='center')
                 label.draw()
 
-
-
-        # TODO draw development cards
-
-
     def draw_bank_cards(self) -> list[pyglet.text.Label]:
         """Draw resource and development cards still in the bank"""
         resource_bank = self.board.resource_bank
@@ -138,9 +132,7 @@ class Renderer():
 
         for i in range(5):
             label = pyglet.text.Label()
-            # TODO maybe add x scaling to fill from left, rather than have fixed places
             self.bank_sprites[i].draw()
-            # TODO draw number over card representing resource_counts[i]
             x = self.bank_sprites[i].x
             y = self.bank_sprites[i].y
             width = self.bank_sprites[i].width
@@ -163,7 +155,7 @@ class Renderer():
                 self.player_info_sprites[(p_num * 14) + 7].text = str(len(player.dev_cards))
                 self.player_info_sprites[(p_num * 14) + 10].text = str("-1")
                 longest_road = str(self.board.calculate_player_longest_road(player))
-                self.player_info_sprites[(p_num * 14) + 13].text = longest_road 
+                self.player_info_sprites[(p_num * 14) + 13].text = longest_road
             sprite.draw()
 
     def draw_buttons(self):
@@ -197,7 +189,15 @@ class Renderer():
                 v2_x = v2.center[0]
                 v2_y = v2.center[1]
                 owner = road.owner
-                self.road_sprites.append(pyglet.shapes.Line(v1_x, v1_y, v2_x, v2_y, thickness=10.0, color=owner.color.value))
+                self.road_sprites.append(
+                    pyglet.shapes.Line(
+                        v1_x,
+                        v1_y,
+                        v2_x,
+                        v2_y,
+                        thickness=10.0,
+                        color=owner.color.value)
+                )
 
         # render all roads in road_sprites
         for road in self.road_sprites:
@@ -223,8 +223,11 @@ class Renderer():
                     added = True
                 # add the new building to the building_sprites dict
                 if added:
-                    self.building_sprites[vertex_index] = Button(False, vertex_button.center, sprite)
-            
+                    self.building_sprites[vertex_index] = Button(
+                        False,
+                        vertex_button.center,
+                        sprite)
+
         for vertex_index in self.building_sprites:
             if self.building_sprites[vertex_index] is not None:
                 self.building_sprites[vertex_index].draw()
@@ -323,7 +326,6 @@ class Renderer():
         padding = card_width / 30
 
         for i, image in enumerate(card_imgs):
-            # TODO adjust offset based on index
             x = padding + card_width * i
             y = padding
             sprite = pyglet.sprite.Sprite(image, x=x, y=y)
@@ -364,10 +366,10 @@ class Renderer():
         dice_imgs = self.images[47:53]
 
         image_width = dice_imgs[0].width
-       
+
         roll_button = self.buttons[1]
 
-        dice_width = min(roll_button.width / 2, roll_button.height) * 0.8 
+        dice_width = min(roll_button.width / 2, roll_button.height) * 0.8
 
         scale = dice_width / image_width
 
@@ -410,14 +412,20 @@ class Renderer():
         for p_num, player in enumerate(self.board.players):
             # display player color, VPs, #cards, #dev cards, #knights played, longest road
             y_pos = y - ((p_num)*y_offset)
-            player_sprite = pyglet.shapes.Rectangle(x, y_pos + card_width, card_width, card_width, color=player.color.value)
+            player_sprite = pyglet.shapes.Rectangle(
+                x,
+                y_pos + card_width,
+                card_width,
+                card_width,
+                color=player.color.value)
             self.player_info_sprites.append(player_sprite)
 
             # display vp total inside the player's color box
             vp_label = pyglet.text.Label(str(player.vps),
                     font_name='Times New Roman',
                     font_size=25,
-                    x=player_sprite.x + (player_sprite.width / 2), y=player_sprite.y + (player_sprite.height / 2),
+                    x=player_sprite.x + (player_sprite.width / 2),
+                    y=player_sprite.y + (player_sprite.height / 2),
                     anchor_x='center', anchor_y='center')
             self.player_info_sprites.append(vp_label)
 
@@ -426,7 +434,9 @@ class Renderer():
             card_sprite = pyglet.sprite.Sprite(resource_card_back_img, x=x_pos, y=y_pos)
             card_sprite.scale = scale*2
             self.player_info_sprites.append(card_sprite)
-            label_background, label = self.label_from_sprite(card_sprite, str(len(player.resources)))
+            label_background, label = self.label_from_sprite(
+                card_sprite,
+                str(len(player.resources)))
 
             self.player_info_sprites.append(label_background)
             self.player_info_sprites.append(label)
@@ -437,7 +447,9 @@ class Renderer():
             dev_card_sprite.scale = scale*2
             self.player_info_sprites.append(dev_card_sprite)
 
-            label_background, label = self.label_from_sprite(dev_card_sprite, str(len(player.dev_cards)))
+            label_background, label = self.label_from_sprite(
+                dev_card_sprite,
+                str(len(player.dev_cards)))
 
             self.player_info_sprites.append(label_background)
             self.player_info_sprites.append(label)
@@ -449,8 +461,9 @@ class Renderer():
             knight_sprite.scale = scale*2
             self.player_info_sprites.append(knight_sprite)
 
-            # TODO: get the number of knight cards from each player
-            label_background, label = self.label_from_sprite(knight_sprite, str(len(player.dev_cards)))
+            label_background, label = self.label_from_sprite(
+                knight_sprite,
+                str(len(player.dev_cards)))
 
             self.player_info_sprites.append(label_background)
             self.player_info_sprites.append(label)
@@ -458,18 +471,19 @@ class Renderer():
             # position the graphic that shows the longest road count
             x_pos = x + (card_width*7) + padding*12
 
-            # TODO - Jeb: use a different image
             road_sprite = pyglet.sprite.Sprite(knight_img, x=x_pos, y=y_pos)
             road_sprite.scale = scale*2
             self.player_info_sprites.append(road_sprite)
 
-            # TODO: get the longest road for each player
-            label_background, label = self.label_from_sprite(road_sprite, str(len(player.dev_cards)))
+            label_background, label = self.label_from_sprite(
+                road_sprite,
+                str(len(player.dev_cards)))
 
             self.player_info_sprites.append(label_background)
             self.player_info_sprites.append(label)
 
     def load_building_sprites(self):
+        """Load building sprites"""
         self.building_sprites = []
 
     def label_from_sprite(self, sprite, text):
@@ -495,17 +509,34 @@ class Renderer():
     def load_buttons(self):
         """Load button objects"""
         self.buttons.append(
-            Button(False, (self.window.width/2 + 60, 100), width=50, height=50, button_name="run_ai_turn"))
-        self.buttons.append(Button(False, (self.window.width/20 * 19, self.window.height/20 * 19), width=200, height=100, button_name="roll_dice"))
-        self.buttons.append(Button(False, (self.window.width/2, self.window.height/8), width=50, height=50, button_name="build_settlement"))
-        self.buttons.append(Button(False, (self.window.width/2 + 60, self.window.height/8), width=50, height=50, button_name="build_city"))
-        self.buttons.append(Button(False, (self.window.width / 2, 100), width=50, height=50, button_name="end_turn"))
-        self.buttons.append(Button(False, (self.window.width/2 + 120, self.window.height/8), width=50, height=50, button_name="build_road"))
+            Button(False,
+                   (self.window.width/2 + 60, 100),
+                   width=50, height=50, button_name="run_ai_turn"))
+        self.buttons.append(
+            Button(False,
+                   (self.window.width/20 * 19, self.window.height/20 * 19),
+                   width=200, height=100, button_name="roll_dice"))
+        self.buttons.append(
+            Button(False,
+                   (self.window.width/2, self.window.height/8),
+                   width=50, height=50, button_name="build_settlement"))
+        self.buttons.append(
+            Button(False,
+                   (self.window.width/2 + 60, self.window.height/8),
+                   width=50, height=50, button_name="build_city"))
+        self.buttons.append(
+            Button(False,
+                   (self.window.width / 2, 100),
+                   width=50, height=50, button_name="end_turn"))
+        self.buttons.append(
+            Button(False,
+                   (self.window.width/2 + 120, self.window.height/8),
+                   width=50, height=50, button_name="build_road"))
 
         #width = self.window.width
         #height = window.height * 0.1
         #end_turn_button = Button(False, (x, y), width=width, height=height, button_name="end_turn")
-        
+
         self.vertex_buttons = [None for _ in range(54)]
 
         # initialize vertex buttons:
@@ -523,7 +554,12 @@ class Renderer():
                 vertex_index = TILE_ADJACENCY[index][i]
                 if self.vertex_buttons[vertex_index] is None:
                     sprite = pyglet.shapes.Circle(x_pos,y_pos, 20, color=(0,0,int(255/(i+1))))
-                    self.vertex_buttons[vertex_index] = Button(True, (x_pos, y_pos), radius=20, button_name="vertex", button_sprite=sprite)
+                    self.vertex_buttons[vertex_index] = Button(
+                        True,
+                        (x_pos, y_pos),
+                        radius=20,
+                        button_name="vertex",
+                        button_sprite=sprite)
 
 
     def load_tiles_batch(self):
@@ -625,9 +661,10 @@ class Renderer():
                     batch=self.gen_num_batch, x=x, y=y)
                 gen_num_sprite.scale = gen_num_scale
                 self.gen_num_sprites.append(gen_num_sprite)
-    
+
 
     def load_background(self):
+        """Load the background image"""
         background_img = self.images[53]
         self.background_sprite = pyglet.sprite.Sprite(background_img, x=0, y=0)
         self.background_sprite.scale = self.window.height / background_img.height
@@ -635,6 +672,4 @@ class Renderer():
     def get_clickables(self):
         """return list of clickable elements on the board"""
         clickables = self.buttons
-        # TODO get all buttons from the renderer
         return clickables
-    

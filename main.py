@@ -1,14 +1,16 @@
+"""Runs a game of Catan between a single player and 3 AI"""
 import pyglet
 from render import Renderer
 import event_handler
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     config = pyglet.gl.Config(sample_buffers=1, samples=8, double_buffer=True)
     window = pyglet.window.Window(config=config, width=3000, height=1500, caption="Catan")
     renderer = Renderer(window)
 
     @window.event
     def on_draw():
+        """The on_draw method called by pyglet"""
         renderer.update()
 
     @window.event

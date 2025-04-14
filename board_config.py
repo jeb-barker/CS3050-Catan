@@ -3,7 +3,7 @@ from enum import Enum
 from texture_enums import Resource
 
 # Adjacency List representing vertices and their neighbors
-"""
+VERTEX_DEFINITION = """
         0 1 2
        3 4 5 6
        7 8 9 10
@@ -105,7 +105,10 @@ class Building(Enum):
     ROAD = 3
 
 BUILDING_COSTS = {
-    Building.CITY : [Resource.wheat, Resource.wheat, Resource.ore, Resource.ore, Resource.ore,], # 2 wheat, 3 ore
-    Building.SETTLEMENT : [Resource.wheat, Resource.brick, Resource.sheep, Resource.wood], # 1 wheat, 1 brick, 1 sheep, 1 wood
-    Building.ROAD : [Resource.wood, Resource.brick] # 1 wood, 1 brick
+    Building.CITY :
+        [Resource.wheat, Resource.wheat, Resource.ore, Resource.ore, Resource.ore,], # 2 w, 3 o
+    Building.SETTLEMENT :
+        [Resource.wheat, Resource.brick, Resource.sheep, Resource.wood], # 1 w, 1 b, 1 s, 1 w
+    Building.ROAD : 
+        [Resource.wood, Resource.brick] # 1 wood, 1 brick
 }

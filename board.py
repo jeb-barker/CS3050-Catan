@@ -229,7 +229,8 @@ class Board:
         """Is the given vertex_index a valid place for a settlement"""
         vertex = self.vertices[vertex_index]
         # check if player can afford a settlement
-        if not self.game_state.is_start_phase() and not owner.has_resources(BUILDING_COSTS[Building.SETTLEMENT]):
+        if not self.game_state.is_start_phase() and \
+        not owner.has_resources(BUILDING_COSTS[Building.SETTLEMENT]):
             return False
         # check if city or settlement is there already:
         if vertex.building != Building.NONE:
@@ -502,7 +503,7 @@ class Board:
             for vertex_index in range(54):
                 if self.is_valid_settle_spot(state.get_current_player(), vertex_index):
                     # only add valid settle spots
-                     valid_vertices.append(vertex_index)
+                    valid_vertices.append(vertex_index)
 
         elif state.tags['city']:
             # show valid places to place a city
@@ -529,7 +530,7 @@ class Board:
 
         return valid_vertices
 
-    
+
     def ai_start_turn(self, player):
         """The current player takes a turn (during the start phase) automatically"""
         state = self.game_state
@@ -584,7 +585,6 @@ class Board:
 
         # Look for legal settle spots
         state.tags['settlement'] = True
-        cost = BUILDING_COSTS[Building.SETTLEMENT]
         valid_spots = self.get_clickable_vertices()
 
         # Choose random index and build settlement there
@@ -595,7 +595,6 @@ class Board:
 
         # Look for legal road spots
         state.tags['road'] = True
-        cost = BUILDING_COSTS[Building.ROAD]
 
         valid_spots = self.get_clickable_vertices()
 

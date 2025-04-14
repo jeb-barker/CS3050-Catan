@@ -1,6 +1,5 @@
 """This file contains functions useful for handling game logic after buttons are clicked"""
 
-from texture_enums import Resource
 from board_config import Building, BUILDING_COSTS
 
 def on_click(x, y, renderer):
@@ -51,7 +50,8 @@ def on_click(x, y, renderer):
                     not state.tags['settlement'] and \
                     not state.tags['city']:
                         # In the start phase, roads cannot be placed before settlements
-                        if (not state.is_start_phase()) or state.tags['settlements_placed_turn'] == 1:
+                        if (not state.is_start_phase()) or \
+                        state.tags['settlements_placed_turn'] == 1:
                             # toggle the button
                             if state.tags['road']:
                                 state.tags['road'] = False
@@ -76,20 +76,21 @@ def on_click(x, y, renderer):
     for vertex_index in renderer.board.get_clickable_vertices():
         button = renderer.vertex_buttons[vertex_index]
         if button.contains((x,y)):
+            curr_player = state.get_current_player()
             match button.button_name:
                 case "vertex":
                     # vertex buttons can only be clicked if building tags are active
                     if state.tags['city']:
-                        renderer.board.place_building(Building.CITY, state.get_current_player(), vertex_index)
+                        renderer.board.place_building(Building.CITY, curr_player, vertex_index)
                         state.tags['city'] = False
                     elif state.tags['settlement']:
-                        # if the state is in the start phase, 
+                        # if the state is in the start phase,
                         # give the player the requisite resources to place a settlement
                         if state.is_start_phase():
                             cost = BUILDING_COSTS[Building.SETTLEMENT]
-                            renderer.board.add_resources(state.get_current_player(), cost)
+                            renderer.board.add_resources(curr_player, cost)
                             state.tags['settlement_pos'] = vertex_index
-                        renderer.board.place_building(Building.SETTLEMENT, state.get_current_player(), vertex_index)
+                        renderer.board.place_building(Building.SETTLEMENT, curr_player, vertex_index)
                         state.tags['settlement'] = False
                     elif state.tags['road']:
                         # if the first point hasn't been assigned,
@@ -103,14 +104,14 @@ def on_click(x, y, renderer):
                             if state.is_start_phase():
                                 # give the player the cost of the road if we're in the start phase
                                 cost = BUILDING_COSTS[Building.ROAD]
-                                renderer.board.add_resources(state.get_current_player(), cost)
-                            renderer.board.place_road(state.get_current_player(), vertex1, vertex_index)
+                                renderer.board.add_resources(curr_player, cost)
+                            renderer.board.place_road(curr_player, vertex1, vertex_index)
                             state.tags['road_v1'] = None
                             state.tags['road'] = False
                             # check if settlement has been placed already this turn for start_phase
                             if state.is_start_phase():
                                 if state.tags['settlements_placed_turn'] == 1:
-                                    previous_player = state.get_current_player()
+                                    previous_player = curr_player
                                     second_settle = state.end_turn_start_phase()
                                     if second_settle:
                                         # give resources to previous player
