@@ -113,7 +113,7 @@ def on_click(x, y, renderer):
                                     previous_player = state.get_current_player()
                                     second_settle = state.end_turn_start_phase()
                                     if second_settle:
-                                        # give resources to previous player 
+                                        # give resources to previous player
                                         resources = renderer.board.get_resources_from_vertex(state.tags['settlement_pos'])
                                         renderer.board.add_resources(previous_player, resources)
                             state.tags['settlement_pos'] = None
