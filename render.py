@@ -527,15 +527,18 @@ class Renderer():
         width = self.window.width
         height = self.window.height * 0.1
         x = 0
-        y = 0 
+        y = 0
         #end_turn_label = Label(
         end_turn_button = Button(
-            center=(x, y), 
-            width=width, 
-            height=height, 
+            False,
+            center=(x, y),
+            width=width,
+            height=height,
             button_name="end_turn",
-            button_label="End Turn")
-        
+            button_label=pyglet.text.Label("End Turn"))
+
+        self.buttons.append(end_turn_button)
+
         self.buttons.append(
             Button(False,
                    (self.window.width/2 + 60, 100),
