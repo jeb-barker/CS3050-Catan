@@ -66,10 +66,10 @@ def on_click(x, y, renderer):
                         state.tags['road'] = False
                         # check if the (new) player is AI
                         if not state.get_current_player().is_user:
-                            renderer.ai_turn(state.get_current_player())
+                            renderer.board.ai_turn(state.get_current_player())
                     elif state.is_start_phase():
                         if not state.get_current_player().is_user:
-                            renderer.ai_start_turn(state.get_current_player())
+                            renderer.board.ai_start_turn(state.get_current_player())
                 case _:
                     pass
 

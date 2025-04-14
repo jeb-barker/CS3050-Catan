@@ -508,7 +508,7 @@ class Board:
             # show valid places to place a city
             for vertex_index in range(54):
                 if vertex_index is not None:
-                    if self.board.is_valid_city_spot(state.get_current_player(), vertex_index):
+                    if self.is_valid_city_spot(state.get_current_player(), vertex_index):
                         # only add valid city spots
                         valid_vertices.append(vertex_index)
         elif state.tags['road']:
@@ -537,7 +537,7 @@ class Board:
         state.tags['settlement'] = True
         cost = BUILDING_COSTS[Building.SETTLEMENT]
         self.add_resources(state.get_current_player(), cost)
-        valid_spots = get_clickable_vertices() 
+        valid_spots = self.get_clickable_vertices() 
 
         # Choose random index and build settlement there
         random.shuffle(valid_spots)
@@ -549,7 +549,7 @@ class Board:
         state.tags['road'] = True
         cost = BUILDING_COSTS[Building.ROAD]
         self.add_resources(player, cost)
-        valid_spots = get_clickable_vertices()
+        valid_spots = self.get_clickable_vertices()
 
         # Choose a random index and place first road vertex there
         random.shuffle(valid_spots)
@@ -557,7 +557,7 @@ class Board:
         state.tags['road_v1'] = v1
 
         # Choose the second vertex
-        valid_spots = get_clickable_vertices()
+        valid_spots = self.get_clickable_vertices()
         random.shuffle(valid_spots)
         v2 = valid_spots[0]
         self.place_road(player, v1, v2)
@@ -569,15 +569,15 @@ class Board:
         second_settle = state.end_turn_start_phase()
         if second_settle:
             # give resources to previous player
-            resources = self.board.get_resources_from_vertex(state.tags['settlement_pos'])
-            self.board.add_resources(previous_player, resources)
+            resources = self.get_resources_from_vertex(state.tags['settlement_pos'])
+            self.add_resources(previous_player, resources)
 
     def ai_turn(self, player):
         """The current player takes a turn automatically"""
-        state = self.board.game_state
+        state = self.game_state
         # Call start turn
         state.roll_dice()
-        self.board.start_turn(player)
+        self.start_turn(player)
 
         # move the game_state
         state.start_building_phase()
@@ -585,7 +585,7 @@ class Board:
         # Look for legal settle spots
         state.tags['settlement'] = True
         cost = BUILDING_COSTS[Building.SETTLEMENT]
-        valid_spots = list(self.get_vertex_buttons().keys())
+        valid_spots = self.get_clickable_vertices()
 
         # Choose random index and build settlement there
         random.shuffle(valid_spots)
@@ -597,7 +597,7 @@ class Board:
         state.tags['road'] = True
         cost = BUILDING_COSTS[Building.ROAD]
 
-        valid_spots = list(self.get_vertex_buttons().keys())
+        valid_spots = self.get_clickable_vertices()
 
         # Choose a random index and place first road vertex there
         random.shuffle(valid_spots)
