@@ -6,7 +6,6 @@ Texture loading, positioning and scaling
 from threading import Thread
 
 import math
-import random
 import pyglet
 from pyglet.gl import (
     glClearColor, glClear, glEnable, glBlendFunc,
@@ -15,8 +14,8 @@ from pyglet.gl import (
 
 
 from board import Board
-from board_config import TILE_ADJACENCY, BUILDING_COSTS, Building
-from texture_enums import Resource, Card, Color
+from board_config import TILE_ADJACENCY, Building
+from texture_enums import Resource, Color
 from button import Button
 
 
@@ -113,7 +112,7 @@ class Renderer():
                 offset = self.card_sprites[i].width / 28
                 self.card_sprites[i].x += limit * offset
                 self.card_sprites[i].y += limit * offset
-                for _ in range(limit):    
+                for _ in range(limit):
                     self.card_sprites[i].x -= offset
                     self.card_sprites[i].y -= offset
                     self.card_sprites[i].draw()
@@ -532,7 +531,7 @@ class Renderer():
 
         width = self.window.width * 0.15 - pad
         height = self.window.height * 0.120 - pad
-        x = self.window.width - width / 2 - pad;
+        x = self.window.width - width / 2 - pad
         y = height / 2 + pad
         label = pyglet.text.Label("End Turn", font_size = 65,
             font_name="Times New Roman",
@@ -556,7 +555,7 @@ class Renderer():
             height=height,
             button_name="roll_dice",
             button_label=label)
-        
+
         x -= width + pad * 2
         y = height / 2 + pad
         label = pyglet.text.Label("Ai Move", font_size = 65,
@@ -572,7 +571,7 @@ class Renderer():
 
         width = self.window.height * 0.1
         height = self.window.height * 0.1
-        x = self.window.width / 2 - self.tile_sprites[0].width;
+        x = self.window.width / 2 - self.tile_sprites[0].width
         y = self.window.height * 0.08
         label = pyglet.text.Label("Settlement", font_size = 24,
             font_name="Times New Roman",
@@ -585,7 +584,7 @@ class Renderer():
             button_name="build_settlement",
             button_label=label)
 
-        x = self.window.width / 2        
+        x = self.window.width / 2
 
         label = pyglet.text.Label("City", font_size = 48,
             font_name="Times New Roman",
