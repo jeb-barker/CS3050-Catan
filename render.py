@@ -16,7 +16,7 @@ from pyglet.gl import (
 
 from board import Board
 from board_config import TILE_ADJACENCY, BUILDING_COSTS, Building
-from texture_enums import Resource, Card
+from texture_enums import Resource, Card, Color
 from button import Button
 
 
@@ -46,7 +46,6 @@ class Renderer():
         else:
             self.board = board
 
-        self.board.players[0].dev_cards = [Card.knight, Card.knight, Card.knight, Card.monopoly]
 
         self.load_images()
         self.tiles_batch = pyglet.graphics.Batch()
@@ -86,8 +85,7 @@ class Renderer():
         self.tiles_batch.draw()
         # draw gen nums
         self.gen_num_batch.draw()
-        # draw the cards in player 0's hand #TODO render the actual current player's stuff
-        self.draw_player_cards(0)
+        self.draw_player_cards(self.board.game_state.get_current_player().player_id)
         # draw the bank
         self.draw_bank_cards()
 
@@ -157,6 +155,13 @@ class Renderer():
 
     def draw_player_info(self):
         """Draw each sprite in the player_info_sprites"""
+        player_to_move = self.board.game_state.get_current_player()
+        base_sprite = self.player_info_sprites[player_to_move.player_id * 14]
+        radius = self.window.width *0.003
+        to_move_sprite = pyglet.shapes.Circle(radius=radius, color=Color.black.value,
+            x=base_sprite.x - radius * 2, y=base_sprite.y + base_sprite.height / 2)
+        to_move_sprite.draw()
+
         for sprite in self.player_info_sprites:
             for p_num, player in enumerate(self.board.players):
                 self.player_info_sprites[(p_num * 14) + 1].text = str(player.vps)
@@ -382,7 +387,7 @@ class Renderer():
 
         image_width = dice_imgs[0].width
 
-        roll_button = self.buttons[2]
+        roll_button = self.buttons[1]
 
         dice_width = min(roll_button.width / 2, roll_button.height) * 0.8
 
@@ -392,10 +397,10 @@ class Renderer():
         y_pad = (roll_button.height - dice_width) / 2
 
         x_1 = roll_button.top_left[0] + x_pad
-        y_1 = roll_button.bottom_right[1] + y_pad
+        y_1 = roll_button.bottom_right[1] + y_pad + roll_button.height
 
         x_2 = roll_button.top_left[0] + (roll_button.width + x_pad) / 2
-        y_2 = roll_button.bottom_right[1] + y_pad
+        y_2 = roll_button.bottom_right[1] + y_pad + roll_button.height
 
         self.dice_sprites = []
         for i in range(6):
@@ -529,7 +534,8 @@ class Renderer():
         height = self.window.height * 0.120 - pad
         x = self.window.width - width / 2 - pad;
         y = height / 2 + pad
-        end_turn_label = pyglet.text.Label("End Turn", font_size = 50,
+        label = pyglet.text.Label("End Turn", font_size = 65,
+            font_name="Times New Roman",
             x=x, y=y, anchor_x='center', anchor_y='center')
         end_turn_button = Button(
             False,
@@ -537,31 +543,81 @@ class Renderer():
             width=width,
             height=height,
             button_name="end_turn",
-            button_label=end_turn_label)
+            button_label=label)
+
+        y = self.window.height * 0.67
+        label = pyglet.text.Label("Roll", font_size = 65,
+            font_name="Times New Roman",
+            x=x, y=y, anchor_x='center', anchor_y='center')
+        roll_button = Button(
+            False,
+            center=(x,y),
+            width=width,
+            height=height,
+            button_name="roll_dice",
+            button_label=label)
+        
+        x -= width + pad * 2
+        y = height / 2 + pad
+        label = pyglet.text.Label("Ai Move", font_size = 65,
+            font_name="Times New Roman",
+            x=x, y=y, anchor_x='center', anchor_y='center')
+        ai_button = Button(
+            False,
+            center=(x,y),
+            width=width,
+            height=height,
+            button_name="run_ai_turn",
+            button_label=label)
+
+        width = self.window.height * 0.1
+        height = self.window.height * 0.1
+        x = self.window.width / 2 - self.tile_sprites[0].width;
+        y = self.window.height * 0.08
+        label = pyglet.text.Label("Settlement", font_size = 24,
+            font_name="Times New Roman",
+            x=x, y=y, anchor_x='center', anchor_y='center')
+        build_settlement_button = Button(
+            False,
+            center=(x, y),
+            width=width,
+            height=height,
+            button_name="build_settlement",
+            button_label=label)
+
+        x = self.window.width / 2        
+
+        label = pyglet.text.Label("City", font_size = 48,
+            font_name="Times New Roman",
+            x=x, y=y, anchor_x='center', anchor_y='center')
+        build_city_button = Button(
+            False,
+            center=(x, y),
+            width=width,
+            height=height,
+            button_name="build_city",
+            button_label=label)
+
+        x += self.tile_sprites[0].width
+        label = pyglet.text.Label("Road", font_size = 48,
+            font_name="Times New Roman",
+            x=x, y=y, anchor_x='center', anchor_y='center')
+        build_road_button = Button(
+            False,
+            center=(x, y),
+            width=width,
+            height=height,
+            button_name="build_road",
+            button_label=label)
         
 
 
-        self.buttons.append(
-            Button(False,
-                   (self.window.width/2 + 60, 100),
-                   width=50, height=50, button_name="run_ai_turn"))
-        self.buttons.append(
-            Button(False,
-                   (self.window.width/20 * 19, self.window.height/20 * 19),
-                   width=200, height=100, button_name="roll_dice"))
-        self.buttons.append(
-            Button(False,
-                   (self.window.width/2, self.window.height/8),
-                   width=50, height=50, button_name="build_settlement"))
-        self.buttons.append(
-            Button(False,
-                   (self.window.width/2 + 60, self.window.height/8),
-                   width=50, height=50, button_name="build_city"))
+        self.buttons.append(ai_button)
+        self.buttons.append(roll_button)
+        self.buttons.append(build_settlement_button)
+        self.buttons.append(build_city_button)
+        self.buttons.append(build_road_button)
         self.buttons.append(end_turn_button)
-        self.buttons.append(
-            Button(False,
-                   (self.window.width/2 + 120, self.window.height/8),
-                   width=50, height=50, button_name="build_road"))
 
         #width = self.window.width
         #height = window.height * 0.1

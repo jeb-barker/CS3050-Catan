@@ -2,6 +2,7 @@
 offers basic functionality for checking if points are within the bounds."""
 import math
 import pyglet
+from texture_enums import Color
 
 class Button:
     """
@@ -16,7 +17,8 @@ class Button:
         if is_circle:
             self.radius = radius
             if button_sprite is None:
-                self.button_sprite = pyglet.shapes.Circle(self.center[0], self.center[1], self.radius, color=(255, 0, 0))
+                self.button_sprite = pyglet.shapes.Circle(self.center[0], self.center[1], 
+                    self.radius, color=Color.red.value)
             else:
                 self.button_sprite = button_sprite
         else:
@@ -27,7 +29,8 @@ class Button:
             self.height = height
 
             if button_sprite is None:
-                self.button_sprite = pyglet.shapes.Rectangle(self.top_left[0], self.bottom_right[1], width, height, color=(255, 0, 0))
+                self.button_sprite = pyglet.shapes.Rectangle(self.top_left[0], self.bottom_right[1], 
+                    width, height, color=Color.red.value)
             else:
                 self.button_sprite = button_sprite
 
