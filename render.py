@@ -63,6 +63,7 @@ class Renderer():
         self.load_dice_sprites()
 
         self.road_sprites = []
+        self.building_sprites = {index:None for index in range(54)}
 
 
     def update(self):
@@ -90,6 +91,7 @@ class Renderer():
         self.draw_buttons()
         self.draw_dice()
         self.draw_roads()
+        self.draw_buildings()
 
 
     def draw_player_cards(self, player_id):
@@ -200,7 +202,32 @@ class Renderer():
         # render all roads in road_sprites
         for road in self.road_sprites:
             road.draw()
-                
+
+    def draw_buildings(self):
+        """Draw cities and settlements on the board"""
+        for vertex_index, vertex in enumerate(self.board.vertices):
+            if self.building_sprites[vertex_index] is None:
+                added = False
+                vertex_button = self.vertex_buttons[vertex_index]
+                x_pos = vertex_button.center[0] - (vertex_button.radius) # center the building
+                y_pos = vertex_button.center[1]
+                size = vertex_button.radius * 2
+                sprite = pyglet.shapes.Rectangle(x_pos, y_pos, size, size, color=(0,0,0))
+                if vertex.building is Building.SETTLEMENT:
+                    color = vertex.owner.color.value
+                    sprite = pyglet.shapes.Rectangle(x_pos, y_pos, size, size, color=color)
+                    added = True
+                elif vertex.building is Building.CITY:
+                    color = vertex.owner.color.value
+                    sprite = pyglet.shapes.Rectangle(x_pos, y_pos, size, size*1.5, color=color)
+                    added = True
+                # add the new building to the building_sprites dict
+                if added:
+                    self.building_sprites[vertex_index] = Button(False, vertex_button.center, sprite)
+            
+        for vertex_index in self.building_sprites:
+            if self.building_sprites[vertex_index] is not None:
+                self.building_sprites[vertex_index].draw()
 
     def load_images(self):
         """Multithreaded image loading for all textures used in rendering"""
