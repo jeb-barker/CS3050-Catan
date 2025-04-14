@@ -382,7 +382,7 @@ class Renderer():
 
         image_width = dice_imgs[0].width
 
-        roll_button = self.buttons[1]
+        roll_button = self.buttons[2]
 
         dice_width = min(roll_button.width / 2, roll_button.height) * 0.8
 
@@ -532,12 +532,15 @@ class Renderer():
         end_turn_label = pyglet.text.Label("End Turn", font_size = 50,
             x=x, y=y, anchor_x='center', anchor_y='center')
         end_turn_button = Button(
-            center=(x, y), 
-            width=width, 
-            height=height, 
+            False,
+            center=(x, y),
+            width=width,
+            height=height,
             button_name="end_turn",
             button_label=end_turn_label)
         
+
+
         self.buttons.append(
             Button(False,
                    (self.window.width/2 + 60, 100),
