@@ -336,10 +336,9 @@ class Renderer():
         x_offset = 0
         y_offset = 0
         for i, image in enumerate(card_imgs):
-            # TODO adjust offset based on index
-            if ((i + 1) % 5 == 0):
+            if (i > 0 and i % 5 == 0):
                 x_offset = 0
-                y_offset += card_height
+                y_offset += card_height + padding * 5
 
             x = padding + x_offset
             y = padding + y_offset
@@ -536,6 +535,7 @@ class Renderer():
             button_name="end_turn",
             button_label="End Turn")
         
+        self.buttons.append(
             Button(False,
                    (self.window.width/2 + 60, 100),
                    width=50, height=50, button_name="run_ai_turn"))
